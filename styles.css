@@ -1,0 +1,221 @@
+/* ملف styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+    direction: rtl;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    padding: 20px 0;
+    margin: 0;
+}
+
+.table-container {
+    margin: 20px auto;
+    width: 80%;
+    overflow-x: auto; /* إضافة شريط تمرير أفقي للجدول إذا كانت الشاشة ضيقة جدًا */
+}
+
+table {
+    width: 100%;
+    margin: 20px 0;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+a {
+    text-decoration: none;
+    color: #333;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+#player {
+    margin: 20px auto; /* توسيط الإطار الضمني */
+    width: 80%;
+    padding-bottom: 56.25%;
+    position: relative;
+    height: 0;
+    z-index: 1; /* ضع الإطار الضمني فوق الجدول */
+}
+
+#player iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.form-container {
+    margin-top: 20px;
+    padding: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"] {
+    padding: 8px;
+    margin-bottom: 10px;
+    width: calc(100% - 16px); /* استخدام تقنية الحساب للعرض */
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px; /* تباعد بسيط بين الأزرار */
+}
+
+/* أنماط مختلفة */
+.theme-1 {
+    background-color: #f4f4f4;
+}
+
+.theme-1 h1 {
+    background-color: #007bff;
+    color: white;
+}
+
+.theme-1 th {
+    background-color: #007bff;
+    color: white;
+}
+
+.theme-1 button {
+    background-color: #007bff;
+    color: white;
+}
+
+.theme-1 button:hover {
+    background-color: #0056b3;
+}
+
+.theme-2 {
+    background-color: #e0f7fa;
+}
+
+.theme-2 h1, .theme-2 th, .theme-2 button {
+    background-color: #0097a7;
+    color: white;
+}
+
+.theme-2 button:hover {
+    background-color: #006064;
+}
+
+.theme-3 {
+    background-color: #fff3e0;
+}
+
+.theme-3 h1, .theme-3 th, .theme-3 button {
+    background-color: #fb8c00;
+    color: white;
+}
+
+.theme-3 button:hover {
+    background-color: #ef6c00;
+}
+
+.theme-4 {
+    background-color: #f3e5f5;
+}
+
+.theme-4 h1, .theme-4 th, .theme-4 button {
+    background-color: #8e24aa;
+    color: white;
+}
+
+.theme-4 button:hover {
+    background-color: #6a1b9a;
+}
+
+.theme-5 {
+    background-color: #e8f5e9;
+}
+
+.theme-5 h1, .theme-5 th, .theme-5 button {
+    background-color: #43a047;
+    color: white;
+}
+
+.theme-5 button:hover {
+    background-color: #2e7d32;
+}
+
+.theme-6 {
+    background-color: #fbe9e7;
+}
+
+.theme-6 h1, .theme-6 th, .theme-6 button {
+    background-color: #d84315;
+    color: white;
+}
+
+.theme-6 button:hover {
+    background-color: #bf360c;
+}
+
+.theme-7 {
+    background-color: #e1f5fe;
+}
+
+.theme-7 h1, .theme-7 th, .theme-7 button {
+    background-color: #0288d1;
+    color: white;
+}
+
+.theme-7 button:hover {
+    background-color: #0277bd;
+}
+
+.theme-8 {
+    background-color: #ffebee;
+}
+
+.theme-8 h1, .theme-8 th, .theme-8 button {
+    background-color: #c62828;
+    color: white;
+}
+
+.theme-8 button:hover {
+    background-color: #b71c1c;
+}
+
+.theme-9 {
+    background-color: #f9fbe7;
+}
+
+.theme-9 h1, .theme-9 th, .theme-9 button {
+    background-color: #afb42b;
+    color: white;
+}
+
+.theme-9 button:hover {
+    background-color: #9e9d24;
+}
+
+.theme-10 {
+    background-color: #f3e5f5;
+}
+
+.theme-10 h1, .theme-10 th, .theme-10 button {
+    background-color: #7e57c2;
+    color: white;
+}
+
+.theme-10 button:hover {
+    background-color: #5e35b1;
+}

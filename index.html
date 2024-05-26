@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قنوات البث المباشر</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-1">
+    <div id="header">
+        <h1>قنوات البث المباشر</h1>
+    </div>
+
+    <div id="player">
+        <iframe id="channelFrame" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>القناة</th>
+                    <th>القناة</th>
+                    <th>القناة</th>
+                </tr>
+            </thead>
+            <tbody id="channelsBody">
+                <!-- البيانات تضاف هنا من خلال JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-container">
+        <label for="channelName">اسم القناة:</label>
+        <input type="text" id="channelName" name="channelName" required>
+
+        <label for="channelLink">رابط القناة:</label>
+        <input type="text" id="channelLink" name="channelLink" required>
+
+        <button onclick="addChannel()">إضافة قناة</button>
+        <input type="file" id="fileInput">
+        <button onclick="loadData()">استدعاء البيانات</button>
+        <button onclick="saveData()">حفظ البيانات</button>
+        <button onclick="showDeleteButtons()">إظهار أزرار الحذف</button> <!-- زر إظهار أزرار الحذف -->
+        <button onclick="changeTheme()">تغيير المظهر</button> <!-- زر تغيير المظهر -->
+    </div>
+
+    <div class="footer">
+        <p class="credit">برمجة حسين العرياني</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
