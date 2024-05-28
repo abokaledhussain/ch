@@ -11,6 +11,7 @@
         }
         .container {
             display: flex;
+            justify-content: space-between; /* توزيع المسافة بالتساوي بين الأعمدة */
         }
         .channel-list {
             width: 200px;
@@ -37,17 +38,30 @@
             height: 300px;
             border: none;
         }
+  footer {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 50px;
+            padding: 10px;
+            background-color: #1e6091; /* اللون السماوي الداكن للخلفية */
+            color: black; /* لون النص */
+            border: 2px solid black; /* سمك ولون الإطار */
+            border-radius: 10px; /* شكل حواف الإطار */
+        }
+           .programmer {
+            color: white; /* تغيير لون النص */
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <h1>قنوات تلفزيونية</h1>
   
     <div class="iframe-container">
         <iframe name="iframe" src="https://www.youtube.com/embed/moQtMet7F7w?si=xFITmG9neRW3vOTy"></iframe>
     </div>
   
     <div class="container">
-        <!-- العمود الأول يحتوي على 11 قناة -->
+        <!-- العمود الأول يحتوي على 6 قنوات -->
         <div class="channel-list">
             <a href="https://www.youtube.com/embed/moQtMet7F7w?si=xFITmG9neRW3vOTy" target="iframe">قناة القرآن الكريم</a>
             <a href="https://www.youtube.com/embed/Kt7hKHlArl8?si=e33BL-LS6qGdoN1H" target="iframe">قناة السنة</a>
@@ -55,19 +69,25 @@
             <a href="https://www.youtube.com/embed/me1fBxx9wJY?si=cCw5mUQgYPhJy1ha" target="iframe">قناة اسكاي نيوز</a>
             <a href="https://www.youtube.com/embed/bCgJhh5qoog?si=glQHR7vFelWH09FJ" target="iframe">قناة العربية</a>
             <a href="https://www.youtube.com/embed/et0bSUddkn4?si=GH4sNzZEQSdun6IO" target="iframe">قناة الحدث</a>
+        </div>
+        <!-- العمود الثاني يحتوي على 5 قنوات -->
+        <div class="channel-list">
             <a href="https://www.youtube.com/embed/TiPYdMXt_XI?si=ccFkEZquFFB1Gx1a" target="iframe">قناة الجزيرة الوثائقية</a>
             <a href="https://www.youtube.com/embed/FlzMedKfQOs?si=2zQPprdec0cxiBhp&amp;controls=0" target="iframe">لشرق الوثائقية</a>
             <a href="https://www.youtube.com/embed/BJ3Yv572V1A?si=-DHVI1NbLFCM6fao" target="iframe">قناة ناشيونال جيوغرافيك</a>
             <a href="https://www.youtube.com/embed/mVhb_Qnc1ME?si=rCU_KDBuVnG0JSKA" target="iframe">قناة DW</a>
             <a href="https://www.youtube.com/embed/mn4DlkkqfAo?si=tzzRWYTawF4Ssgi8" target="iframe">قناة الإخبارية السعودية</a>
         </div>
-        <!-- العمود الثاني يحتوي على 10 قنوات -->
+        <!-- العمود الثالث يحتوي على 5 قنوات -->
         <div class="channel-list">
             <a href="https://www.youtube.com/embed/VuYzy8IuT0Y?si=xmc9veP25-7AAg5F" target="iframe">قناة 24 فرنس</a>
             <a href="https://www.youtube.com/embed/1lfZqksTVOU?si=Xk6joD8EaWwVwPJx" target="iframe">طبيعة مباشر</a>
             <a href="https://www.youtube.com/embed/UV0mhY2Dxr0?si=QPanVcdmlP2ib99X" target="iframe">طبيعة مباشر</a>
             <a href="https://www.youtube.com/embed/-527PXkCtZw?si=9o-Wne5_kE_kQ9BE" target="iframe">الصين العربية cctv</a>
             <a href="https://www.youtube.com/embed/6smlpd2BS5k?si=Cf9tJgtR58EWJrwn" target="iframe">BBC عربي</a>
+        </div>
+        <!-- العمود الرابع يحتوي على 5 قنوات -->
+        <div class="channel-list">
             <a href="https://www.youtube.com/embed/VxWSGagPx98?si=8GHhza1eVNiTW_cJ" target="iframe">كرتون نتورك</a>
             <a href="https://www.youtube.com/embed/iU8gBtBRYWU?si=Wg8yCmwcsNKe1tfu" target="iframe">النيل الاخبارية</a>
             <a href="https://www.youtube.com/embed/zoaWeCeCKV8?si=sVRtIOwxhf_USHPU" target="iframe">TRT عربي</a>
@@ -75,5 +95,8 @@
             <a href="https://www.youtube.com/embed/GHChHSuPfT4?si=6rN7QsnaoY8RZkxN" target="iframe">الحرة العراقية</a>
         </div>
     </div>
+    
+    <footer><span class="programmer">برمجة حسين العرياني</span></footer>
+  
 </body>
 </html>
