@@ -6,77 +6,95 @@
     <title>قنوات تلفزيونية</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            direction: rtl;
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
             margin: 0;
             padding: 0;
-            background-color: #f2f2f2;
-            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            direction: rtl; /* اتجاه النص من اليمين إلى اليسار */
+            overflow-x: hidden; /* منع شريط التمرير الأفقي */
         }
         .fullscreen-iframe {
-            width: 100vw;
-            height: calc(100vw * 9 / 16); /* الارتفاع = العرض * نسبة العرض إلى الارتفاع لمقاطع الفيديو (16:9) */
-            max-width: 100%;
-            max-height: 50vh;
+            width: 100%;
+            max-width: 1200px; /* تحديد الحد الأقصى للعرض */
+            height: 60vh;
             margin-bottom: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             background-color: #fff;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
         }
-        .channel-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            grid-gap: 20px;
-        }
-        .channel-list a {
-            display: block;
-            padding: 15px;
-            background-color: #f9f9f9;
-            text-decoration: none;
-            color: #444;
-            border-radius: 10px;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .channel-list a:hover {
-            background-color: #e0e0e0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        }
-        footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #777;
-        }
-        iframe {
-            border: none;
+        .fullscreen-iframe iframe {
             width: 100%;
             height: 100%;
+            border: none;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
         }
         #searchInput {
-            width: calc(100% - 40px); /* عرض الجدول - الهامش */
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.3s ease;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
         }
-        #searchInput:focus {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            border-color: #888;
+        .channel-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
         }
+        .channel-list a {
+            flex: 1 1 calc(50% - 15px);
+            text-decoration: none;
+            color: #333;
+            background-color: #e9f5ff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+            box-sizing: border-box;
+        }
+        .channel-list a:hover {
+            background-color: #007BFF;
+            color: #fff;
+            transform: scale(1.05);
+        }
+        footer {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #007BFF;
+            color: white;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+            border-top: 3px solid #ffc107;
+        }
+        footer .programmer {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #;
+    color: #;
+    border-radius: 4px;
+    font-family: Arial, sans-serif; /* يمكنك استبدال Arial بالخط الذي تريده */
+}
+  
     </style>
 </head>
-
 <body>
 
     <div class="fullscreen-iframe" id="videoFrame">
@@ -85,9 +103,8 @@
 
     <div class="container">
         <input type="text" id="searchInput" placeholder="ابحث عن القناة...">
-        <!-- العمود الأول يحتوي على 6 قنوات -->
         <div class="channel-list" id="channelList">
-            <a href="https://www.youtube.com/embed/moQtMet7F7w?si=xFITmG9neRW3vOTy" target="iframe" onclick="scrollToIframe(event)">قناة القرآن الكريم</a>
+           <a href="https://www.youtube.com/embed/moQtMet7F7w?si=xFITmG9neRW3vOTy" target="iframe" onclick="scrollToIframe(event)">قناة القرآن الكريم</a>
             <a href="https://www.youtube.com/embed/Kt7hKHlArl8?si=e33BL-LS6qGdoN1H" target="iframe" onclick="scrollToIframe(event)">قناة السنة</a>
             <a href="https://www.youtube.com/embed/bNyUyrR0PHo?si=WDZxmrSVYJd5DXVG" target="iframe" onclick="scrollToIframe(event)">قناة الجزيرة</a>
             <a href="https://www.youtube.com/embed/me1fBxx9wJY?si=cCw5mUQgYPhJy1ha" target="iframe" onclick="scrollToIframe(event)">قناة اسكاي نيوز</a>
@@ -111,10 +128,9 @@
             <a href="https://www.youtube.com/embed/1lfZqksTVOU?si=Xk6joD8EaWwVwPJx" target="iframe" onclick="scrollToIframe(event)">طبيعة مباشر</a>
             <a href="https://www.youtube.com/embed/UV0mhY2Dxr0?si=QPanVcdmlP2ib99X" target="iframe" onclick="scrollToIframe(event)">طبيعة مباشر</a>
             <a href="https://www.youtube.com/embed/-527PXkCtZw?si=9o-Wne5_kE_kQ9BE" target="iframe" onclick="scrollToIframe(event)">الصين العربية cctv</a>
-            <a href="https://www.youtube.com/embed/0fnkA5YEglU?si=6aDVDrU-KuQSIy1P" target="iframe" onclick="scrollToIframe(event)">مذكرة مسافر تركيا</a>
-            <a href="https://www.youtube.com/embed/BqysbaH4pxI?si=tdGa7kZj2RaWb4cq" target="iframe" onclick="scrollToIframe(event)">مذكرة مسافر قرغيزستان</a>
-     
-        </div>
+            <a href="https://www.youtube.com/embed/0fnkA5YEglU?si=6aDVDrU-KuQSIy1P" target="iframe" onclick="scrollToIframe(event)">مذكرة مسافر</a>
+            <a href="https://www.youtube.com/embed/BqysbaH4pxI?si=tdGa7kZj2RaWb4cq" target="iframe" onclick="scrollToIframe(event)">مذكرة مسافر</a>
+           </div>
     </div>
 
     <footer>
@@ -122,28 +138,22 @@
     </footer>
 
     <script>
-        const searchInput = document.getElementById('searchInput');
-        const channelList = document.getElementById('channelList').getElementsByTagName('a');
-
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.trim().toLowerCase();
-
-            for (const channel of channelList) {
-                const channelName = channel.textContent.trim().toLowerCase();
-                if (channelName.includes(searchTerm)) {
-                    channel.style.display = 'block';
-                } else {
-                    channel.style.display = 'none';
-                }
-            }
-        });
-
         function scrollToIframe(event) {
             event.preventDefault();
-            const iframeLink = event.currentTarget.getAttribute('href');
-            document.querySelector('iframe[name="iframe"]').src = iframeLink;
-            document.getElementById('videoFrame').scrollIntoView({ behavior: 'smooth' });
+            document.querySelector('iframe[name="iframe"]').src = event.target.href;
+            document.querySelector('iframe[name="iframe"]').scrollIntoView({ behavior: 'smooth' });
         }
+
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            document.querySelectorAll('.channel-list a').forEach(function (link) {
+                if (link.textContent.toLowerCase().includes(query)) {
+                    link.style.display = 'block';
+                } else {
+                    link.style.display = 'none';
+                }
+            });
+        });
     </script>
 </body>
 </html>
