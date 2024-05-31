@@ -6,50 +6,73 @@
     <title>قنوات تلفزيونية</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             direction: rtl;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        .fullscreen-iframe {
+            width: 100vw;
+            height: calc(100vw * 9 / 16); /* الارتفاع = العرض * نسبة العرض إلى الارتفاع لمقاطع الفيديو (16:9) */
+            max-width: 100%;
+            max-height: 50vh;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         .container {
-            display: flex;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
         }
         .channel-list {
-            width: 200px;
-            margin-right: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-gap: 20px;
         }
         .channel-list a {
             display: block;
-            padding: 0px;
-            background-color: #f0f0f0;
-            margin-bottom: 10px;
+            padding: 15px;
+            background-color: #f9f9f9;
             text-decoration: none;
-            color: black;
+            color: #444;
             border-radius: 10px;
-            text-align: center;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
         .channel-list a:hover {
-            background-color: #ccc;
+            background-color: #e0e0e0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
-        .iframe-container {
-            flex-grow: 1;
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
         }
         iframe {
-            width: 100%;
-            height: 300px;
             border: none;
+            width: 100%;
+            height: 100%;
         }
-  footer {
-            text-align: center;
-            font-weight: bold;
-            margin-top: 50px;
+        #searchInput {
+            width: calc(100% - 40px); /* عرض الجدول - الهامش */
             padding: 10px;
-            background-color: #1e6091; /* اللون السماوي الداكن للخلفية */
-            color: black; /* لون النص */
-            border: 2px solid black; /* سمك ولون الإطار */
-            border-radius: 10px; /* شكل حواف الإطار */
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
         }
-           .programmer {
-            color: white; /* تغيير لون النص */
-            font-weight: bold;
+        #searchInput:focus {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            border-color: #888;
         }
     </style>
 </head>
@@ -61,26 +84,22 @@
     </div>
 
     <div class="container">
+        <input type="text" id="searchInput" placeholder="ابحث عن القناة...">
         <!-- العمود الأول يحتوي على 6 قنوات -->
-        <div class="channel-list">
+        <div class="channel-list" id="channelList">
             <a href="https://www.youtube.com/embed/moQtMet7F7w?si=xFITmG9neRW3vOTy" target="iframe">قناة القرآن الكريم</a>
             <a href="https://www.youtube.com/embed/Kt7hKHlArl8?si=e33BL-LS6qGdoN1H" target="iframe">قناة السنة</a>
             <a href="https://www.youtube.com/embed/bNyUyrR0PHo?si=WDZxmrSVYJd5DXVG" target="iframe">قناة الجزيرة</a>
             <a href="https://www.youtube.com/embed/me1fBxx9wJY?si=cCw5mUQgYPhJy1ha" target="iframe">قناة اسكاي نيوز</a>
             <a href="https://www.youtube.com/embed/bCgJhh5qoog?si=glQHR7vFelWH09FJ" target="iframe">قناة العربية</a>
             <a href="https://www.youtube.com/embed/et0bSUddkn4?si=GH4sNzZEQSdun6IO" target="iframe">قناة الحدث</a>
-            <a href="https://www.youtube.com/embed/zoaWeCeCKV8?si=sVRtIOwxhf_USHPU" target="iframe">TRT عربي</a>
+            <a href="https://www.youtube.com/embed/qhMnaWUXApc?si=HyoTUg86S_edXhTf" target="iframe">TRT عربي</a>
             <a href="https://www.youtube.com/embed/lig945CnE2U?si=Om9rNGFDjwLgSUMO" target="iframe">قناة المجد</a>
             <a href="https://www.youtube.com/embed/6smlpd2BS5k?si=Cf9tJgtR58EWJrwn" target="iframe">BBC عربي</a>
             <a href="https://www.youtube.com/embed/VxWSGagPx98?si=8GHhza1eVNiTW_cJ" target="iframe">كرتون نتورك</a>
             <a href="https://www.youtube.com/embed/iU8gBtBRYWU?si=Wg8yCmwcsNKe1tfu" target="iframe">النيل الاخبارية</a>
             <a href="https://www.youtube.com/embed/VuYzy8IuT0Y?si=xmc9veP25-7AAg5F" target="iframe">قناة 24 فرنس</a>
-            <a href="https://www.youtube.com/embed/BqysbaH4pxI?si=tdGa7kZj2RaWb4cq" target="iframe">مذكرة مسافر</a>
-
-        </div>
-      
-        <div class="channel-list">
-            <a href="https://www.youtube.com/embed/TiPYdMXt_XI?si=ccFkEZquFFB1Gx1a" target="iframe">قناة الجزيرة الوثائقية</a>
+                     <a href="https://www.youtube.com/embed/TiPYdMXt_XI?si=ccFkEZquFFB1Gx1a" target="iframe">قناة الجزيرة الوثائقية</a>
             <a href="https://www.youtube.com/embed/FlzMedKfQOs?si=2zQPprdec0cxiBhp&amp;controls=0" target="iframe">لشرق الوثائقية</a>
             <a href="https://www.youtube.com/embed/BJ3Yv572V1A?si=-DHVI1NbLFCM6fao" target="iframe">قناة ناشيونال جيوغرافيك</a>
             <a href="https://www.youtube.com/embed/mVhb_Qnc1ME?si=rCU_KDBuVnG0JSKA" target="iframe">قناة DW</a>
@@ -93,13 +112,30 @@
             <a href="https://www.youtube.com/embed/UV0mhY2Dxr0?si=QPanVcdmlP2ib99X" target="iframe">طبيعة مباشر</a>
             <a href="https://www.youtube.com/embed/-527PXkCtZw?si=9o-Wne5_kE_kQ9BE" target="iframe">الصين العربية cctv</a>
             <a href="https://www.youtube.com/embed/0fnkA5YEglU?si=6aDVDrU-KuQSIy1P" target="iframe">مذكرة مسافر</a>
-      
-        </div>
+            <a href="https://www.youtube.com/embed/BqysbaH4pxI?si=tdGa7kZj2RaWb4cq" target="iframe">مذكرة مسافر</a>
+    </div>
     </div>
 
     <footer>
         <span class="programmer">برمجة حسين العرياني</span>
     </footer>
-  
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const channelList = document.getElementById('channelList').getElementsByTagName('a');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.trim().toLowerCase();
+
+            for (const channel of channelList) {
+                const channelName = channel.textContent.trim().toLowerCase();
+                if (channelName.includes(searchTerm)) {
+                    channel.style.display = 'block';
+                } else {
+                    channel.style.display = 'none';
+                }
+            }
+        });
+    </script>
 </body>
 </html>
