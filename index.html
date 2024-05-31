@@ -79,7 +79,7 @@
 
 <body>
 
-    <div class="fullscreen-iframe">
+    <div class="fullscreen-iframe" id="videoFrame">
         <iframe name="iframe" src="https://www.youtube.com/embed/moQtMet7F7w?si=xFITmG9neRW3vOTy" allowfullscreen></iframe>
     </div>
 
@@ -87,33 +87,34 @@
         <input type="text" id="searchInput" placeholder="ابحث عن القناة...">
         <!-- العمود الأول يحتوي على 6 قنوات -->
         <div class="channel-list" id="channelList">
-            <a href="https://www.youtube.com/embed/moQtMet7F7w?si=xFITmG9neRW3vOTy" target="iframe">قناة القرآن الكريم</a>
-            <a href="https://www.youtube.com/embed/Kt7hKHlArl8?si=e33BL-LS6qGdoN1H" target="iframe">قناة السنة</a>
-            <a href="https://www.youtube.com/embed/bNyUyrR0PHo?si=WDZxmrSVYJd5DXVG" target="iframe">قناة الجزيرة</a>
-            <a href="https://www.youtube.com/embed/me1fBxx9wJY?si=cCw5mUQgYPhJy1ha" target="iframe">قناة اسكاي نيوز</a>
-            <a href="https://www.youtube.com/embed/bCgJhh5qoog?si=glQHR7vFelWH09FJ" target="iframe">قناة العربية</a>
-            <a href="https://www.youtube.com/embed/et0bSUddkn4?si=GH4sNzZEQSdun6IO" target="iframe">قناة الحدث</a>
-            <a href="https://www.youtube.com/embed/qhMnaWUXApc?si=HyoTUg86S_edXhTf" target="iframe">TRT عربي</a>
-            <a href="https://www.youtube.com/embed/lig945CnE2U?si=Om9rNGFDjwLgSUMO" target="iframe">قناة المجد</a>
-            <a href="https://www.youtube.com/embed/6smlpd2BS5k?si=Cf9tJgtR58EWJrwn" target="iframe">BBC عربي</a>
-            <a href="https://www.youtube.com/embed/VxWSGagPx98?si=8GHhza1eVNiTW_cJ" target="iframe">كرتون نتورك</a>
-            <a href="https://www.youtube.com/embed/iU8gBtBRYWU?si=Wg8yCmwcsNKe1tfu" target="iframe">النيل الاخبارية</a>
-            <a href="https://www.youtube.com/embed/VuYzy8IuT0Y?si=xmc9veP25-7AAg5F" target="iframe">قناة 24 فرنس</a>
-                     <a href="https://www.youtube.com/embed/TiPYdMXt_XI?si=ccFkEZquFFB1Gx1a" target="iframe">قناة الجزيرة الوثائقية</a>
-            <a href="https://www.youtube.com/embed/FlzMedKfQOs?si=2zQPprdec0cxiBhp&amp;controls=0" target="iframe">لشرق الوثائقية</a>
-            <a href="https://www.youtube.com/embed/BJ3Yv572V1A?si=-DHVI1NbLFCM6fao" target="iframe">قناة ناشيونال جيوغرافيك</a>
-            <a href="https://www.youtube.com/embed/mVhb_Qnc1ME?si=rCU_KDBuVnG0JSKA" target="iframe">قناة DW</a>
-            <a href="https://www.youtube.com/embed/mn4DlkkqfAo?si=tzzRWYTawF4Ssgi8" target="iframe">قناة الإخبارية السعودية</a>
-            <a href="https://www.youtube-nocookie.com/embed/QoY06xa2vII?si=9ws1rsoPQstvvNfR" target="iframe">قناة بالقيس</a>
-            <a href="https://www.youtube.com/embed/GHChHSuPfT4?si=6rN7QsnaoY8RZkxN" target="iframe">الحرة العراقية</a>
-            <a href="https://www.youtube.com/embed/e2RgSa1Wt5o?si=K7LBE9boN6GWULv0" target="iframe">قناة العربي</a>
-            <a href="https://arabic.rt.com/live/rt-player" target="iframe">روسيا اليوم</a>
-            <a href="https://www.youtube.com/embed/1lfZqksTVOU?si=Xk6joD8EaWwVwPJx" target="iframe">طبيعة مباشر</a>
-            <a href="https://www.youtube.com/embed/UV0mhY2Dxr0?si=QPanVcdmlP2ib99X" target="iframe">طبيعة مباشر</a>
-            <a href="https://www.youtube.com/embed/-527PXkCtZw?si=9o-Wne5_kE_kQ9BE" target="iframe">الصين العربية cctv</a>
-            <a href="https://www.youtube.com/embed/0fnkA5YEglU?si=6aDVDrU-KuQSIy1P" target="iframe">مذكرة مسافر</a>
-            <a href="https://www.youtube.com/embed/BqysbaH4pxI?si=tdGa7kZj2RaWb4cq" target="iframe">مذكرة مسافر</a>
-    </div>
+            <a href="https://www.youtube.com/embed/moQtMet7F7w?si=xFITmG9neRW3vOTy" target="iframe" onclick="scrollToIframe(event)">قناة القرآن الكريم</a>
+            <a href="https://www.youtube.com/embed/Kt7hKHlArl8?si=e33BL-LS6qGdoN1H" target="iframe" onclick="scrollToIframe(event)">قناة السنة</a>
+            <a href="https://www.youtube.com/embed/bNyUyrR0PHo?si=WDZxmrSVYJd5DXVG" target="iframe" onclick="scrollToIframe(event)">قناة الجزيرة</a>
+            <a href="https://www.youtube.com/embed/me1fBxx9wJY?si=cCw5mUQgYPhJy1ha" target="iframe" onclick="scrollToIframe(event)">قناة اسكاي نيوز</a>
+            <a href="https://www.youtube.com/embed/bCgJhh5qoog?si=glQHR7vFelWH09FJ" target="iframe" onclick="scrollToIframe(event)">قناة العربية</a>
+            <a href="https://www.youtube.com/embed/et0bSUddkn4?si=GH4sNzZEQSdun6IO" target="iframe" onclick="scrollToIframe(event)">قناة الحدث</a>
+            <a href="https://www.youtube.com/embed/qhMnaWUXApc?si=HyoTUg86S_edXhTf" target="iframe" onclick="scrollToIframe(event)">TRT عربي</a>
+            <a href="https://www.youtube.com/embed/lig945CnE2U?si=Om9rNGFDjwLgSUMO" target="iframe" onclick="scrollToIframe(event)">قناة المجد</a>
+            <a href="https://www.youtube.com/embed/6smlpd2BS5k?si=Cf9tJgtR58EWJrwn" target="iframe" onclick="scrollToIframe(event)">BBC عربي</a>
+            <a href="https://www.youtube.com/embed/VxWSGagPx98?si=8GHhza1eVNiTW_cJ" target="iframe" onclick="scrollToIframe(event)">كرتون نتورك</a>
+            <a href="https://www.youtube.com/embed/iU8gBtBRYWU?si=Wg8yCmwcsNKe1tfu" target="iframe" onclick="scrollToIframe(event)">النيل الاخبارية</a>
+            <a href="https://www.youtube.com/embed/VuYzy8IuT0Y?si=xmc9veP25-7AAg5F" target="iframe" onclick="scrollToIframe(event)">قناة 24 فرنس</a>
+            <a href="https://www.youtube.com/embed/TiPYdMXt_XI?si=ccFkEZquFFB1Gx1a" target="iframe" onclick="scrollToIframe(event)">قناة الجزيرة الوثائقية</a>
+            <a href="https://www.youtube.com/embed/FlzMedKfQOs?si=2zQPprdec0cxiBhp&amp;controls=0" target="iframe" onclick="scrollToIframe(event)">لشرق الوثائقية</a>
+            <a href="https://www.youtube.com/embed/BJ3Yv572V1A?si=-DHVI1NbLFCM6fao" target="iframe" onclick="scrollToIframe(event)">قناة ناشيونال جيوغرافيك</a>
+            <a href="https://www.youtube.com/embed/mVhb_Qnc1ME?si=rCU_KDBuVnG0JSKA" target="iframe" onclick="scrollToIframe(event)">قناة DW</a>
+            <a href="https://www.youtube.com/embed/mn4DlkkqfAo?si=tzzRWYTawF4Ssgi8" target="iframe" onclick="scrollToIframe(event)">قناة الإخبارية السعودية</a>
+            <a href="https://www.youtube-nocookie.com/embed/QoY06xa2vII?si=9ws1rsoPQstvvNfR" target="iframe" onclick="scrollToIframe(event)">قناة بالقيس</a>
+            <a href="https://www.youtube.com/embed/GHChHSuPfT4?si=6rN7QsnaoY8RZkxN" target="iframe" onclick="scrollToIframe(event)">الحرة العراقية</a>
+            <a href="https://www.youtube.com/embed/e2RgSa1Wt5o?si=K7LBE9boN6GWULv0" target="iframe" onclick="scrollToIframe(event)">قناة العربي</a>
+            <a href="https://arabic.rt.com/live/rt-player" target="iframe" onclick="scrollToIframe(event)">روسيا اليوم</a>
+            <a href="https://www.youtube.com/embed/1lfZqksTVOU?si=Xk6joD8EaWwVwPJx" target="iframe" onclick="scrollToIframe(event)">طبيعة مباشر</a>
+            <a href="https://www.youtube.com/embed/UV0mhY2Dxr0?si=QPanVcdmlP2ib99X" target="iframe" onclick="scrollToIframe(event)">طبيعة مباشر</a>
+            <a href="https://www.youtube.com/embed/-527PXkCtZw?si=9o-Wne5_kE_kQ9BE" target="iframe" onclick="scrollToIframe(event)">الصين العربية cctv</a>
+            <a href="https://www.youtube.com/embed/0fnkA5YEglU?si=6aDVDrU-KuQSIy1P" target="iframe" onclick="scrollToIframe(event)">مذكرة مسافر</a>
+            <a href="https://www.youtube.com/embed/BqysbaH4pxI?si=tdGa7kZj2RaWb4cq" target="iframe" onclick="scrollToIframe(event)">مذكرة مسافر</a>
+     
+        </div>
     </div>
 
     <footer>
@@ -136,6 +137,13 @@
                 }
             }
         });
+
+        function scrollToIframe(event) {
+            event.preventDefault();
+            const iframeLink = event.currentTarget.getAttribute('href');
+            document.querySelector('iframe[name="iframe"]').src = iframeLink;
+            document.getElementById('videoFrame').scrollIntoView({ behavior: 'smooth' });
+        }
     </script>
 </body>
 </html>
