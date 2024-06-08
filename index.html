@@ -5,102 +5,156 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>قنوات تلفزيونية</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            direction: rtl; /* اتجاه النص من اليمين إلى اليسار */
-            overflow-x: hidden; /* منع شريط التمرير الأفقي */
-        }
-        .fullscreen-iframe {
-            width: 100%;
-            max-width: 1200px; /* تحديد الحد الأقصى للعرض */
-            height: 60vh;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .fullscreen-iframe iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        #searchInput {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        .channel-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .channel-list a {
-            flex: 1 1 calc(50% - 15px);
-            text-decoration: none;
-            color: #333;
-            background-color: #e9f5ff;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            text-align: center;
-            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
-            box-sizing: border-box;
-        }
-        .channel-list a:hover {
-            background-color: #007BFF;
-            color: #fff;
-            transform: scale(1.05);
-        }
-        
-footer {
-    margin-top: 20px;
-    padding: 15px;
-   /* background-color: ##;*/
-    color: black;
-    width: 70%;
-    text-align: center;
-    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
-   /* border-top: 3px solid #ffc107;*/
-    border-radius: 10px; /* تحديد شكل الحواف هنا */
+     /* Reset CSS */
+/* إعادة تعيين الأساليب الأساسية */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+/* General styles */
+/* أنماط عامة */
+body {
+    direction: rtl; /* اتجاه النص إلى اليمين */
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+/* Fullscreen iframe */
+/* إطار الفيديو بحجم الشاشة */
+.fullscreen-iframe {
+    width: 100%;
+    max-width: 800px;
+    aspect-ratio: 16 / 9;
+    flex-grow: 1;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.fullscreen-iframe iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Container */
+/* الحاوية */
+.container {
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+    margin-bottom: 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Search bar */
+/* شريط البحث */
+.search-bar {
+    width: calc(100% - 20px);
+    max-width: 600px;
+    padding: 10px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+}
+
+#searchInput {
+    flex-grow: 1;
+    border: none;
+    font-size: 16px;
+    margin-right: 10px;
+    outline: none;
+}
+
+/* Channel list */
+/* قائمة القنوات */
+.channel-list {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    transition: max-height 0.3s;
+}
+
+.channel-list a {
+    text-decoration: none;
+    color: #007bff;
+    padding: 10px;
+    border: 1px solid #007bff;
+    border-radius: 8px;
+    text-align: center;
+    transition: background-color 0.3s, color 0.3s;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.channel-list a:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Footer */
+/* التذييل */
+footer {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #777;
+}
+
+/* Programmer info */
+/* معلومات المبرمج */
+.programmer {
+    text-align: center;
+    font-size: 18px;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5); /* ظل للنص */
+    background: linear-gradient(transparent 50%, #fff 50%); /* خط محفور */
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+/* Loading message */
+/* رسالة التحميل */
+.loading-message {
+    display: none;
+}
     </style>
 </head>
 <body>
 
-    <div class="fullscreen-iframe" id="videoFrame">
-        <iframe name="iframe" src="https://www.youtube.com/embed/moQtMet7F7w?si=xFITmG9neRW3vOTy" allowfullscreen></iframe>
-    </div>
+<div class="fullscreen-iframe" id="videoFrame">
+    <iframe name="iframe" src="https://www.youtube.com/embed/moQtMet7F7w?si=xFITmG9neRW3vOTy" allowfullscreen></iframe>
+</div>
 
-    <div class="container">
+<div class="container">
+    <div class="search-bar">
         <input type="text" id="searchInput" placeholder="ابحث عن القناة...">
-        <div class="channel-list" id="channelList">
-           <a href="https://www.youtube.com/embed/moQtMet7F7w?si=xFITmG9neRW3vOTy" target="iframe" onclick="scrollToIframe(event)">قناة القرآن الكريم</a>
-            <a href="https://www.youtube.com/embed/Kt7hKHlArl8?si=e33BL-LS6qGdoN1H" target="iframe" onclick="scrollToIframe(event)">قناة السنة</a>
-            <a href="https://www.youtube.com/embed/bNyUyrR0PHo?si=WDZxmrSVYJd5DXVG" target="iframe" onclick="scrollToIframe(event)">قناة الجزيرة</a>
+    </div>
+    <div class="channel-list" id="channelList">
+           <a href="https://www.youtube.com/embed/moQtMet7F7w?si=xFITmG9neRW3vOTy" target="iframe" onclick="changeIframeSrc(event)">قناة القرآن الكريم</a>
+           <a href="https://www.youtube.com/embed/Kt7hKHlArl8?si=e33BL-LS6qGdoN1H" target="iframe" onclick="changeIframeSrc(event)">قناة السنة</a>
+          <a href="https://www.youtube.com/embed/bNyUyrR0PHo?si=WDZxmrSVYJd5DXVG" target="iframe" onclick="scrollToIframe(event)">قناة الجزيرة</a>
             <a href="https://www.youtube.com/embed/me1fBxx9wJY?si=cCw5mUQgYPhJy1ha" target="iframe" onclick="scrollToIframe(event)">قناة اسكاي نيوز</a>
             <a href="https://www.youtube.com/embed/bCgJhh5qoog?si=glQHR7vFelWH09FJ" target="iframe" onclick="scrollToIframe(event)">قناة العربية</a>
             <a href="https://www.youtube.com/embed/et0bSUddkn4?si=GH4sNzZEQSdun6IO" target="iframe" onclick="scrollToIframe(event)">قناة الحدث</a>
@@ -125,16 +179,18 @@ footer {
             <a href="https://www.youtube.com/embed/BqysbaH4pxI?si=tdGa7kZj2RaWb4cq" target="iframe" onclick="scrollToIframe(event)">مذكرة مسافر</a>
             <a href="https://www.youtube.com/embed/-SMKVJO_wGo?si=WCGCPRbEuwsxlfbi" target="iframe" onclick="scrollToIframe(event)">جزر لوفوتن النروج</a>
             <a href="https://www.youtube.com/embed/AQM-jqHBrM8?si=AN3ug2Dxn708lnpi" target="iframe" onclick="scrollToIframe(event)">طبيعة</a>
-            <a href="https://www.youtube.com/embed/ar1CB-kbMMA?si=hxP24Lm-fXdj8sPk" target="iframe" onclick="scrollToIframe(event)">لوتربرونن، سويسرا</a>
-           </div>
+           <a href="https://www.youtube.com/embed/ar1CB-kbMMA?si=hxP24Lm-fXdj8sPk" target="iframe" onclick="changeIframeSrc(event)">لوتربرونن، سويسرا</a>
     </div>
+</div>
 
-    <footer>
-        <span class="programmer">برمجة حسين العرياني</span>
-    </footer>
+<footer>
+    <span class="programmer">👋برمجة حسين العرياني</span>
+</footer>
 
-    <script>
-        function scrollToIframe(event) {
+<div class="loading-message" id="loadingMessage">جاري التحميل...</div>
+
+<script>
+      function scrollToIframe(event) {
             event.preventDefault();
             document.querySelector('iframe[name="iframe"]').src = event.target.href;
             document.querySelector('iframe[name="iframe"]').scrollIntoView({ behavior: 'smooth' });
@@ -150,6 +206,6 @@ footer {
                 }
             });
         });
-    </script>
+ </script>
 </body>
 </html>
