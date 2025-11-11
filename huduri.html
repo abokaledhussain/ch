@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>📋 تنظيم الدوام - ثانوية الأمير عبدالمجيد الأولى</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<style>
+:root{
+  --primary:#1f5fa6; --primary-700:#174b83; --accent:#0ea5e9;
+  --bg:#f6f8fc; --card:#fff; --muted:#64748b; --ok:#16a34a; --warn:#ef4444; --border:#e5e7eb;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);font-family:"Cairo",system-ui,-apple-system,sans-serif;color:#0f172a}
+.container{max-width:1200px;margin:26px auto;padding:16px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+header img{height:52px;width:52px;object-fit:contain;border-radius:10px;background:#fff;border:1px solid var(--border)}
+header h1{margin:0;font-size:22px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.04);margin-bottom:12px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px}
+button,.btn{
+  appearance:none;border:1px solid var(--primary);background:var(--primary);color:#fff;
+  padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700
+}
+button:hover{background:var(--primary-700);border-color:var(--primary-700)}
+.btn-ghost{background:#fff;color:#0f172a;border-color:var(--border)}
+.btn-ghost:hover{background:#f8fafc}
+.btn-ok{background:var(--ok);border-color:var(--ok)}
+.btn-warn{background:var(--warn);border-color:var(--warn)}
+.small{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1;min-width:230px}
+label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+input[type="text"],input[type="date"],input[type="number"],textarea,select{
+  width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;outline:none
+}
+.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px}
+table{width:100%;border-collapse:separate;border-spacing:0}
+th,td{padding:10px;border-bottom:1px solid var(--border);background:#fff;vertical-align:middle}
+th{position:sticky;top:0;background:#f8fafc;font-size:13px;color:#334155;z-index:1}
+tr:hover td{background:#f9fafb}
+.badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px}
+.center{display:flex;justify-content:center;align-items:center}
+.hidden{display:none !important}
+
+/* Actions icons */
+.icon-btn{background:#fff;border:1px solid var(--border);padding:6px 10px;border-radius:10px;cursor:pointer}
+.icon-btn:hover{background:#f8fafc}
+.actions{display:flex;gap:6px}
+
+/* Modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:50}
+.modal{position:fixed;inset:0;display:none;z-index:60;align-items:center;justify-content:center;padding:16px}
+.modal .panel{max-width:95vw;width:900px;background:#fff;border-radius:16px;border:1px solid var(--border);box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden}
+.modal .panel header{padding:14px 16px;border-bottom:1px solid var(--border)}
+.modal .panel .body{padding:16px;max-height:70vh;overflow:auto}
+.modal .panel footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-start}
+.modal.show,.modal-backdrop.show{display:flex}
+
+/* Print */
+@media print{
+  .toolbar, .no-print, .icon-btn, .actions, .btn, .modal-backdrop{display:none !important}
+  body{background:#fff}
+  .card{border:none;box-shadow:none}
+  .print-header{display:block !important;margin-bottom:10px}
+}
+.print-header{display:none}
+.print-headline{font-weight:700}
+
+/* Badges */
+.tag{font-size:12px;border:1px dashed var(--border);padding:2px 8px;border-radius:999px;background:#fafafa;color:#475569}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header with dynamic logo/name -->
+  <header>
+    <img id="schoolLogo" alt="شعار" src="" onerror="this.style.display='none'">
+    <div>
+      <h1 id="schoolTitle">📋 تنظيم الدوام - ثانوية الأمير عبدالمجيد الأولى</h1>
+      <div class="small">إدارة احترافية لبيانات الحضور – محليًا على جهازك</div>
+    </div>
+  </header>
+
+  <!-- Toolbar -->
+  <div class="card">
+    <div class="toolbar">
+      <button id="btnSettings" title="إعدادات النظام (ترويسة/شعار/قوالب واتساب/إظهار أقسام)">⚙️ إعدادات</button>
+
+      <button id="btnBrowse" class="btn-ghost" title="عرض جدول الموظفين">📂 استعراض الموظفين</button>
+
+      <button id="btnStatsRange" class="btn-ghost" title="إحصائيات الموظفين خلال فترة">📈 إحصائيات خلال فترة</button>
+
+      <label class="btn-ghost" title="اختر تاريخ ملف حضوري قبل الاستيراد">
+        📅 تاريخ الملف:
+        <input type="date" id="fileDate" style="width:auto;margin-inline-start:8px">
+      </label>
+
+      <label class="btn-ghost" title="استيراد ملف Excel من حضوري/منظم" style="display:flex;align-items:center;gap:8px">
+        📤 استيراد Excel
+        <input type="file" id="excelInput" accept=".xlsx,.xls" style="display:none">
+      </label>
+
+      <button id="btnExportJSON" class="btn-ghost" title="تصدير نسخة احتياطية JSON">💾 تصدير JSON</button>
+      <label class="btn-ghost" title="استيراد نسخة احتياطية JSON" style="display:flex;align-items:center;gap:8px">
+        ⤴️ استيراد JSON
+        <input type="file" id="jsonInput" accept=".json" style="display:none">
+      </label>
+
+      <button id="btnClear" class="btn-warn" title="مسح كل البيانات المحلية">🗑️ مسح الكل</button>
+    </div>
+    <p class="small" style="margin-top:8px">
+      يقبل الاستيراد: ملف منظم (<span class="tag">الاسم</span>، <span class="tag">رقم الهوية</span>، <span class="tag">الجوال</span>، <span class="tag">التخصص</span>، ...)،
+      أو ملف حضوري خام وسنحاول استخراج <span class="tag">رقم الهوية (10 أرقام)</span> تلقائيًا.
+    </p>
+  </div>
+
+  <!-- Add/Update Employee -->
+  <div class="card" id="sectionAdd">
+    <h3>➕ إضافة/تحديث موظف</h3>
+    <div class="row">
+      <div class="col">
+        <label>الاسم</label>
+        <input type="text" id="empName" placeholder="اكتب اسم الموظف">
+      </div>
+      <div class="col">
+        <label>رقم الهوية</label>
+        <input type="text" id="empID" class="mono" placeholder="1XXXXXXXXX">
+      </div>
+      <div class="col">
+        <label>رقم الجوال</label>
+        <input type="text" id="empPhone" class="mono" placeholder="05XXXXXXXX">
+      </div>
+      <div class="col">
+        <label>التخصص</label>
+        <input type="text" id="empSpecialty" placeholder="مثال: رياضيات">
+      </div>
+      <div class="col" style="display:flex;align-items:flex-end">
+        <button id="btnAddEmp">💾 حفظ الموظف</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Employees Table (hidden until browse) -->
+  <div id="sectionTable" class="card hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px">
+      <h3 style="margin:0">👥 قائمة الموظفين</h3>
+      <input id="q" type="text" placeholder="بحث بالاسم/الهوية/الجوال/التخصص" style="max-width:320px">
+    </div>
+    <div class="table-wrap">
+      <table id="grid">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>الاسم</th>
+            <th>رقم الهوية</th>
+            <th>الجوال</th>
+            <th>التخصص</th>
+            <th class="no-print">الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="small center no-print" style="margin-top:16px">برمجة حسين العرياني 💥 — نسخة احترافية قابلة للتوسع</footer>
+</div>
+
+<!-- ===== Modals ===== -->
+<div class="modal-backdrop" id="backdrop"></div>
+
+<!-- Settings Modal -->
+<div class="modal" id="modalSettings" aria-hidden="true">
+  <div class="panel">
+    <header><h3 style="margin:0">⚙️ إعدادات النظام</h3></header>
+    <div class="body">
+      <div class="row">
+        <div class="col">
+          <label>اسم المدرسة</label>
+          <input type="text" id="setSchoolName" placeholder="ثانوية الأمير عبدالمجيد الأولى">
+        </div>
+        <div class="col">
+          <label>رفع/تغيير الشعار</label>
+          <input type="file" id="setLogo" accept="image/*">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label>سطر الترويسة 1</label>
+          <input type="text" id="setHdr1" placeholder="المملكة العربية السعودية">
+        </div>
+        <div class="col">
+          <label>سطر الترويسة 2</label>
+          <input type="text" id="setHdr2" placeholder="وزارة التعليم">
+        </div>
+        <div class="col">
+          <label>سطر الترويسة 3</label>
+          <input type="text" id="setHdr3" placeholder="اسم المدرسة">
+        </div>
+      </div>
+
+      <hr style="margin:16px 0;border:none;border-top:1px solid var(--border)">
+
+      <h4 style="margin:6px 0 10px">💬 قوالب واتساب</h4>
+      <div class="small" style="margin-bottom:8px">استخدم المتغيرات: <span class="tag">{الاسم}</span> <span class="tag">{التاريخ}</span> <span class="tag">{المدرسة}</span></div>
+      <div class="row">
+        <div class="col">
+          <label>قالب تنبيه</label>
+          <textarea id="tplNotify" rows="4" placeholder="أخي ولي الأمر، نود إشعاركم بخصوص {الاسم} بتاريخ {التاريخ}."></textarea>
+        </div>
+        <div class="col">
+          <label>قالب رسالة عامة</label>
+          <textarea id="tplGeneral" rows="4" placeholder="السلام عليكم، هذا تنبيه عام من {المدرسة} بخصوص {الاسم} بتاريخ {التاريخ}."></textarea>
+        </div>
+      </div>
+
+      <hr style="margin:16px 0;border:none;border-top:1px solid var(--border)">
+
+      <h4 style="margin:6px 0 10px">👁️‍🗨️ إظهار/إخفاء أقسام</h4>
+      <div class="row">
+        <label class="col" style="display:flex;gap:8px;align-items:center">
+          <input type="checkbox" id="showAdd" checked> إظهار قسم "إضافة/تحديث موظف"
+        </label>
+        <label class="col" style="display:flex;gap:8px;align-items:center">
+          <input type="checkbox" id="showBrowse" checked> إظهار زر "استعراض الموظفين"
+        </label>
+        <label class="col" style="display:flex;gap:8px;align-items:center">
+          <input type="checkbox" id="showStats" checked> إظهار زر "إحصائيات خلال فترة"
+        </label>
+      </div>
+    </div>
+    <footer>
+      <button class="btn-ok" id="btnSaveSettings">حفظ</button>
+      <button class="btn-ghost" id="btnCloseSettings">إغلاق</button>
+    </footer>
+  </div>
+</div>
+
+<!-- Employee Stats Modal -->
+<div class="modal" id="modalEmpStats" aria-hidden="true">
+  <div class="panel">
+    <header>
+      <h3 id="empStatsTitle" style="margin:0">📊 إحصائيات الموظف</h3>
+    </header>
+    <div class="body">
+      <div class="print-header" id="empPrintHeader"></div>
+      <div id="empStatsTableWrap" class="table-wrap">
+        <table id="empStatsTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>التاريخ (ميلادي)</th>
+              <th>التاريخ (هجري)</th>
+              <th>حاضر</th>
+              <th>غياب</th>
+              <th>تأخير</th>
+              <th>انصراف مبكر</th>
+              <th>إجازات</th>
+              <th>استئذانات</th>
+              <th>ملاحظات</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <footer>
+      <button class="btn-ghost" id="btnEmpExport">📊 تصدير Excel</button>
+      <button class="btn-ghost" id="btnEmpPrint">📄 طباعة</button>
+      <button class="btn" id="btnEmpClose">إغلاق</button>
+    </footer>
+  </div>
+</div>
+
+<!-- Range Stats Modal -->
+<div class="modal" id="modalRange" aria-hidden="true">
+  <div class="panel">
+    <header><h3 style="margin:0">📈 إحصائيات الموظفين خلال فترة</h3></header>
+    <div class="body">
+      <div class="row" style="margin-bottom:10px">
+        <div class="col">
+          <label>من تاريخ</label>
+          <input type="date" id="rangeFrom">
+        </div>
+        <div class="col">
+          <label>إلى تاريخ</label>
+          <input type="date" id="rangeTo">
+        </div>
+        <div class="col" style="display:flex;align-items:flex-end">
+          <button id="btnRunRange" class="btn">عرض الإحصائيات</button>
+        </div>
+      </div>
+
+      <div class="print-header" id="rangePrintHeader"></div>
+
+      <div class="table-wrap">
+        <table id="rangeTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>الاسم</th>
+              <th>رقم الهوية</th>
+              <th>حضور</th>
+              <th>غياب</th>
+              <th>تأخير</th>
+              <th>انصراف مبكر</th>
+              <th>إجازات</th>
+              <th>استئذانات</th>
+              <th>عدد الأيام</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <footer>
+      <button class="btn-ghost" id="btnRangeExport">📊 تصدير Excel</button>
+      <button class="btn-ghost" id="btnRangePrint">📄 طباعة</button>
+      <button class="btn" id="btnRangeClose">إغلاق</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+/* ================== مفاتيح التخزين ================== */
+const KEY_DB = "attendance.db.v1";
+const KEY_SETTINGS = "attendance.settings.v1";
+
+/* ================== المساعدة ================== */
+const $ = (s, r=document)=>r.querySelector(s);
+const $$ = (s, r=document)=>Array.from(r.querySelectorAll(s));
+function load(k, def){ try{ return JSON.parse(localStorage.getItem(k)) ?? def; }catch{ return def; } }
+function save(k, v){ localStorage.setItem(k, JSON.stringify(v)); }
+function todayISO(){ const d=new Date(); return d.toISOString().slice(0,10); }
+function formatHijri(dateISO){
+  try{
+    const d = new Date(dateISO);
+    return new Intl.DateTimeFormat('ar-SA-u-ca-islamic',{day:'numeric',month:'long',year:'numeric'}).format(d);
+  }catch{ return ""; }
+}
+function blobToDataURL(file){ return new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(file); }); }
+
+/* ================== الإعدادات ================== */
+let SETTINGS = load(KEY_SETTINGS, {
+  schoolName: "ثانوية الأمير عبدالمجيد الأولى",
+  logoDataURL: "",
+  header1: "المملكة العربية السعودية",
+  header2: "وزارة التعليم",
+  header3: "ثانوية الأمير عبدالمجيد الأولى",
+  showAdd:true, showBrowse:true, showStats:true,
+  tplNotify: "أخي ولي الأمر، نود إشعاركم بشأن {الاسم} بتاريخ {التاريخ}.\nمع تحيات {المدرسة}",
+  tplGeneral: "السلام عليكم، هذا إشعار عام من {المدرسة} بخصوص {الاسم} بتاريخ {التاريخ}."
+});
+applySettingsToUI();
+
+/* ================== قاعدة البيانات ================== */
+let DB = load(KEY_DB, {}); // {id: {id,name,phone,specialty, records:[{date,hijri,present,absent,late,early,leave,excuse,note}] }}
+
+/* ================== عناصر ================== */
+const el = {
+  schoolLogo: $('#schoolLogo'),
+  schoolTitle: $('#schoolTitle'),
+
+  // inputs
+  empName: $('#empName'), empID: $('#empID'), empPhone: $('#empPhone'), empSpecialty: $('#empSpecialty'),
+  btnAddEmp: $('#btnAddEmp'),
+
+  excelInput: $('#excelInput'), jsonInput: $('#jsonInput'),
+  btnExportJSON: $('#btnExportJSON'), btnClear: $('#btnClear'),
+  btnBrowse: $('#btnBrowse'), btnStatsRange: $('#btnStatsRange'),
+  fileDate: $('#fileDate'),
+
+  // table
+  sectionTable: $('#sectionTable'), q: $('#q'), gridBody: $('#grid tbody'),
+
+  // settings
+  btnSettings: $('#btnSettings'), modalSettings: $('#modalSettings'),
+  setSchoolName: $('#setSchoolName'), setLogo: $('#setLogo'),
+  setHdr1: $('#setHdr1'), setHdr2: $('#setHdr2'), setHdr3: $('#setHdr3'),
+  showAdd: $('#showAdd'), showBrowse: $('#showBrowse'), showStats: $('#showStats'),
+  tplNotify: $('#tplNotify'), tplGeneral: $('#tplGeneral'),
+  btnSaveSettings: $('#btnSaveSettings'), btnCloseSettings: $('#btnCloseSettings'),
+
+  // emp stats modal
+  modalEmpStats: $('#modalEmpStats'), empStatsTitle: $('#empStatsTitle'),
+  empStatsTable: $('#empStatsTable'), empStatsTbody: $('#empStatsTable tbody'),
+  btnEmpExport: $('#btnEmpExport'), btnEmpPrint: $('#btnEmpPrint'), btnEmpClose: $('#btnEmpClose'),
+  empPrintHeader: $('#empPrintHeader'),
+
+  // range modal
+  modalRange: $('#modalRange'), rangeFrom: $('#rangeFrom'), rangeTo: $('#rangeTo'),
+  btnRunRange: $('#btnRunRange'), rangeTable: $('#rangeTable'), rangeTbody: $('#rangeTable tbody'),
+  btnRangeExport: $('#btnRangeExport'), btnRangePrint: $('#btnRangePrint'), btnRangeClose: $('#btnRangeClose'),
+  rangePrintHeader: $('#rangePrintHeader'),
+
+  // others
+  backdrop: $('#backdrop'),
+  sectionAdd: $('#sectionAdd')
+};
+el.fileDate.value = todayISO();
+
+/* ================== وظائف أساسية ================== */
+function upsertEmployee(id, name, phone, specialty){
+  const k = String(id||"").trim(); if(!k) return;
+  if(!DB[k]) DB[k] = { id:k, name:"", phone:"", specialty:"", records:[] };
+  if(name!==undefined && name!=="") DB[k].name = name.trim();
+  if(phone!==undefined && phone!=="") DB[k].phone = phone.trim();
+  if(specialty!==undefined && specialty!=="") DB[k].specialty = specialty.trim();
+  save(KEY_DB, DB);
+}
+
+function addRecordForEmployee(id, rec){
+  if(!DB[id]) return;
+  DB[id].records.push(rec);
+  save(KEY_DB, DB);
+}
+
+function renderEmployees(){
+  const q = el.q.value.trim();
+  const arr = Object.values(DB);
+  const filtered = arr.filter(e=>{
+    if(!q) return true;
+    const hay = `${e.name} ${e.id} ${e.phone} ${e.specialty}`.toLowerCase();
+    return hay.includes(q.toLowerCase());
+  }).sort((a,b)=> (a.name||"").localeCompare(b.name||"", 'ar'));
+
+  el.gridBody.innerHTML = "";
+  filtered.forEach((e,i)=>{
+    const tr = document.createElement('tr');
+    const telHref = e.phone ? `tel:${e.phone}` : '#';
+    const waMsg = buildWhatsAppMessage('notify', e.name);
+    const waHref = e.phone ? `https://wa.me/${e.phone.replace(/\D/g,'')}?text=${encodeURIComponent(waMsg)}` : '#';
+
+    tr.innerHTML = `
+      <td class="mono">${i+1}</td>
+      <td>${e.name||""}</td>
+      <td class="mono">${e.id||""}</td>
+      <td class="mono">${e.phone||""}</td>
+      <td>${e.specialty||""}</td>
+      <td class="actions no-print">
+        <button class="icon-btn" title="تعديل" data-act="edit" data-id="${e.id}">✏️</button>
+        <button class="icon-btn" title="حذف" data-act="del" data-id="${e.id}">🗑️</button>
+        <a class="icon-btn" title="اتصال" href="${telHref}" ${e.phone?'':'onclick="return false"'}>📞</a>
+        <a class="icon-btn" title="واتساب (قالب تنبيه)" href="${waHref}" target="_blank" ${e.phone?'':'onclick="alert(\'أضف الجوال أولًا\');return false"'}>💬</a>
+        <button class="icon-btn" title="إحصائيات الموظف" data-act="stats" data-id="${e.id}">📊</button>
+      </td>
+    `;
+    el.gridBody.appendChild(tr);
+  });
+}
+
+/* ================== أحداث عامة ================== */
+$('#btnAddEmp').onclick = ()=>{
+  const name = el.empName.value.trim();
+  const id = el.empID.value.trim();
+  const phone = el.empPhone.value.trim();
+  const specialty = el.empSpecialty.value.trim();
+  if(!id){ alert("الرجاء إدخال رقم الهوية"); return; }
+  upsertEmployee(id, name, phone, specialty);
+  el.empName.value = ""; el.empID.value = ""; el.empPhone.value = ""; el.empSpecialty.value = "";
+  alert("تم حفظ الموظف.");
+};
+
+el.btnBrowse.onclick = ()=>{
+  el.sectionTable.classList.remove('hidden');
+  renderEmployees();
+};
+el.q.addEventListener('input', ()=>renderEmployees());
+
+/* حذف/تعديل/إحصائيات موظف */
+el.gridBody.addEventListener('click', (ev)=>{
+  const btn = ev.target.closest('[data-act]'); if(!btn) return;
+  const act = btn.dataset.act; const id = btn.dataset.id; if(!id) return;
+
+  if(act==='del'){
+    if(confirm("تأكيد حذف الموظف وجميع سجلاته؟")){
+      delete DB[id]; save(KEY_DB, DB); renderEmployees();
+    }
+  }else if(act==='edit'){
+    const emp = DB[id];
+    const name = prompt("تعديل الاسم:", emp.name||"") ?? emp.name;
+    const phone = prompt("تعديل الجوال:", emp.phone||"") ?? emp.phone;
+    const sp = prompt("تعديل التخصص:", emp.specialty||"") ?? emp.specialty;
+    upsertEmployee(id, name, phone, sp); renderEmployees();
+  }else if(act==='stats'){
+    openEmpStats(id);
+  }
+});
+
+/* ================== استيراد/تصدير ================== */
+$('#btnExportJSON').onclick = ()=>{
+  const blob = new Blob([JSON.stringify(DB,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = "attendance_backup.json";
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+};
+$('label[title="استيراد نسخة احتياطية JSON"]').addEventListener('click', ()=> el.jsonInput.click());
+el.jsonInput.onchange = async (e)=>{
+  const f = e.target.files?.[0]; e.target.value=""; if(!f) return;
+  try{
+    const data = JSON.parse(await f.text());
+    if(typeof data==='object' && !Array.isArray(data)){ DB = data; save(KEY_DB, DB); renderEmployees(); alert("تم الاسترجاع."); }
+    else alert("ملف غير صالح.");
+  }catch{ alert("تعذر قراءة JSON."); }
+};
+el.btnClear.onclick = ()=>{
+  if(confirm("سيتم مسح كل البيانات نهائيًا من هذا المتصفح. متابعة؟")){
+    DB = {}; save(KEY_DB, DB); renderEmployees(); alert("تم المسح.");
+  }
+};
+
+/* استيراد Excel مع تاريخ الملف */
+$('label[title="استيراد ملف Excel من حضوري/منظم"]').addEventListener('click', ()=> el.excelInput.click());
+el.excelInput.addEventListener('change', async (e)=>{
+  const file = e.target.files?.[0]; e.target.value=""; if(!file) return;
+  const dateISO = el.fileDate.value || todayISO();
+  const hijri = formatHijri(dateISO);
+
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    const data = new Uint8Array(ev.target.result);
+    const wb = XLSX.read(data, {type:'array'});
+    const first = wb.SheetNames[0];
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[first], {defval:""});
+    if(!rows.length){ alert("لم يتم العثور على بيانات في الملف"); return; }
+
+    const headers = Object.keys(rows[0]).map(h=>String(h).trim());
+    const isOrganized = headers.includes("الاسم") && headers.includes("رقم الهوية");
+    const idRegex = /(\d{10})/;
+
+    rows.forEach(r=>{
+      let name = String(r["الاسم"]||"").trim();
+      let id = String(r["رقم الهوية"]||"").trim();
+      let phone = String(r["الجوال"]||r["رقم الجوال"]||"").trim();
+      let specialty = String(r["التخصص"]||"").trim();
+
+      if(!isOrganized){
+        if(!id){
+          for(const k of Object.keys(r)){
+            const v = String(r[k]??"");
+            const m = v.match(idRegex);
+            if(m){ id = m[1]; if(!name) name = v.replace(m[1],"").trim(); break; }
+          }
+        }
+      }
+      if(!id) return;
+
+      // أنشئ/حدّث الموظف
+      upsertEmployee(id, name, phone, specialty);
+
+      // كوّن سجل هذا الاستيراد (قيم افتراضية 0 إن لم توجد)
+      const toNum = (x)=> Number(String(x).replace(/[^\d.-]/g,""))||0;
+      const rec = {
+        date: dateISO, hijri,
+        present: toNum(r["حاضر"]),
+        absent:  toNum(r["غياب"]),
+        late:    toNum(r["تأخير الحضور"]||r["تأخير"]),
+        early:   toNum(r["الانصراف المبكر"]||r["انصراف مبكر"]),
+        leave:   toNum(r["الاجازات"]||r["إجازات"]),
+        excuse:  toNum(r["الاستئذانات"]||r["استئذانات"]),
+        note: String(r["ملاحظات"]||r["الحالة"]||"").trim()
+      };
+      addRecordForEmployee(id, rec);
+    });
+
+    alert("تم الاستيراد وتسجيل السجلات بتاريخ الملف.");
+    if(!el.sectionTable.classList.contains('hidden')) renderEmployees();
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+/* ================== إعدادات ================== */
+$('#btnSettings').onclick = ()=> openModal(el.modalSettings);
+$('#btnCloseSettings').onclick = ()=> closeModal(el.modalSettings);
+$('#btnSaveSettings').onclick = async ()=>{
+  SETTINGS.schoolName = el.setSchoolName.value.trim() || SETTINGS.schoolName;
+  SETTINGS.header1 = el.setHdr1.value.trim() || SETTINGS.header1;
+  SETTINGS.header2 = el.setHdr2.value.trim() || SETTINGS.header2;
+  SETTINGS.header3 = el.setHdr3.value.trim() || SETTINGS.header3;
+  SETTINGS.showAdd = el.showAdd.checked;
+  SETTINGS.showBrowse = el.showBrowse.checked;
+  SETTINGS.showStats = el.showStats.checked;
+  SETTINGS.tplNotify = el.tplNotify.value || SETTINGS.tplNotify;
+  SETTINGS.tplGeneral = el.tplGeneral.value || SETTINGS.tplGeneral;
+
+  if(el.setLogo.files && el.setLogo.files[0]){
+    SETTINGS.logoDataURL = await blobToDataURL(el.setLogo.files[0]);
+  }
+
+  save(KEY_SETTINGS, SETTINGS);
+  applySettingsToUI();
+  alert("تم حفظ الإعدادات.");
+  closeModal(el.modalSettings);
+};
+function applySettingsToUI(){
+  // رأس الصفحة
+  el.schoolTitle.textContent = `📋 تنظيم الدوام - ${SETTINGS.schoolName}`;
+  if(SETTINGS.logoDataURL){ el.schoolLogo.src = SETTINGS.logoDataURL; el.schoolLogo.style.display='block'; }
+
+  // إظهار/إخفاء الأقسام/الأزرار
+  el.sectionAdd.style.display = SETTINGS.showAdd ? '' : 'none';
+  $('#btnBrowse').style.display = SETTINGS.showBrowse ? '' : 'none';
+  $('#btnStatsRange').style.display = SETTINGS.showStats ? '' : 'none';
+
+  // تعبئة حقول الإعدادات
+  el.setSchoolName.value = SETTINGS.schoolName;
+  el.setHdr1.value = SETTINGS.header1;
+  el.setHdr2.value = SETTINGS.header2;
+  el.setHdr3.value = SETTINGS.header3;
+  el.showAdd.checked = SETTINGS.showAdd;
+  el.showBrowse.checked = SETTINGS.showBrowse;
+  el.showStats.checked = SETTINGS.showStats;
+  el.tplNotify.value = SETTINGS.tplNotify;
+  el.tplGeneral.value = SETTINGS.tplGeneral;
+}
+
+/* ================== واتساب ================== */
+function buildWhatsAppMessage(kind, employeeName){
+  const base = kind==='notify' ? SETTINGS.tplNotify : SETTINGS.tplGeneral;
+  const date = new Date().toISOString().slice(0,10);
+  return base
+    .replaceAll("{الاسم}", employeeName||"")
+    .replaceAll("{التاريخ}", date)
+    .replaceAll("{المدرسة}", SETTINGS.schoolName||"");
+}
+
+/* ================== نوافذ منبثقة ================== */
+function openModal(m){ el.backdrop.classList.add('show'); m.classList.add('show'); m.setAttribute('aria-hidden','false'); }
+function closeModal(m){ el.backdrop.classList.remove('show'); m.classList.remove('show'); m.setAttribute('aria-hidden','true'); }
+el.backdrop.onclick = ()=>{
+  [el.modalSettings, el.modalEmpStats, el.modalRange].forEach(m=> m.classList.remove('show'));
+  el.backdrop.classList.remove('show');
+};
+
+/* ====== إحصائيات موظف ====== */
+function openEmpStats(id){
+  const emp = DB[id]; if(!emp){ alert("الموظف غير موجود"); return; }
+  el.empStatsTitle.textContent = `📊 إحصائيات الموظف — ${emp.name} (${emp.id})`;
+
+  // رأس الطباعة
+  el.empPrintHeader.innerHTML = `
+    <div class="print-headline">${SETTINGS.header1||""}</div>
+    <div class="print-headline">${SETTINGS.header2||""}</div>
+    <div class="print-headline">${SETTINGS.header3||SETTINGS.schoolName||""}</div>
+    <div>التاريخ: ${todayISO()} — هجري: ${formatHijri(todayISO())}</div>
+    <hr>
+    <div>اسم الموظف: ${emp.name||""} — رقم الهوية: ${emp.id||""} — الجوال: ${emp.phone||""} — التخصص: ${emp.specialty||""}</div>
+  `;
+
+  // تعبئة السجل
+  el.empStatsTbody.innerHTML = "";
+  emp.records
+    .sort((a,b)=> a.date.localeCompare(b.date))
+    .forEach((r,idx)=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="mono">${idx+1}</td>
+        <td class="mono">${r.date||""}</td>
+        <td>${r.hijri||""}</td>
+        <td class="mono">${r.present||0}</td>
+        <td class="mono">${r.absent||0}</td>
+        <td class="mono">${r.late||0}</td>
+        <td class="mono">${r.early||0}</td>
+        <td class="mono">${r.leave||0}</td>
+        <td class="mono">${r.excuse||0}</td>
+        <td>${r.note||""}</td>
+      `;
+      el.empStatsTbody.appendChild(tr);
+    });
+
+  // تخزين المعرف للعمليات
+  el.modalEmpStats.dataset.empId = id;
+
+  openModal(el.modalEmpStats);
+}
+el.btnEmpClose.onclick = ()=> closeModal(el.modalEmpStats);
+
+// تصدير/طباعة إحصائيات موظف
+el.btnEmpExport.onclick = ()=>{
+  const id = el.modalEmpStats.dataset.empId;
+  const emp = DB[id]; if(!emp) return;
+  const tbl = el.empStatsTable;
+  const ws = XLSX.utils.table_to_sheet(tbl);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "EmployeeStats");
+  XLSX.writeFile(wb, `stats_${emp.name}_${id}.xlsx`);
+};
+el.btnEmpPrint.onclick = ()=> window.print();
+
+/* ====== إحصائيات فترة ====== */
+$('#btnStatsRange').onclick = ()=> openModal(el.modalRange);
+el.btnRangeClose.onclick = ()=> closeModal(el.modalRange);
+
+$('#btnRunRange').onclick = ()=>{
+  const from = el.rangeFrom.value || "0001-01-01";
+  const to = el.rangeTo.value || "9999-12-31";
+  const rows = [];
+
+  Object.values(DB).forEach(emp=>{
+    const recs = emp.records.filter(r=> r.date>=from && r.date<=to);
+    const sum = (k)=> recs.reduce((a,c)=> a + Number(c[k]||0), 0);
+    rows.push({
+      emp, days: recs.length,
+      present:sum('present'), absent:sum('absent'), late:sum('late'), early:sum('early'),
+      leave:sum('leave'), excuse:sum('excuse')
+    });
+  });
+
+  // رأس الطباعة
+  el.rangePrintHeader.innerHTML = `
+    <div class="print-headline">${SETTINGS.header1||""}</div>
+    <div class="print-headline">${SETTINGS.header2||""}</div>
+    <div class="print-headline">${SETTINGS.header3||SETTINGS.schoolName||""}</div>
+    <div>الفترة: من ${from} إلى ${to} — هجري اليوم: ${formatHijri(todayISO())}</div>
+    <hr>
+  `;
+
+  // تعبئة الجدول
+  el.rangeTbody.innerHTML = "";
+  rows.sort((a,b)=> (a.emp.name||"").localeCompare(b.emp.name||"", 'ar'))
+      .forEach((r,idx)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="mono">${idx+1}</td>
+          <td>${r.emp.name||""}</td>
+          <td class="mono">${r.emp.id||""}</td>
+          <td class="mono">${r.present}</td>
+          <td class="mono">${r.absent}</td>
+          <td class="mono">${r.late}</td>
+          <td class="mono">${r.early}</td>
+          <td class="mono">${r.leave}</td>
+          <td class="mono">${r.excuse}</td>
+          <td class="mono">${r.days}</td>
+        `;
+        el.rangeTbody.appendChild(tr);
+      });
+};
+
+el.btnRangeExport.onclick = ()=>{
+  const ws = XLSX.utils.table_to_sheet(el.rangeTable);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "RangeStats");
+  XLSX.writeFile(wb, `stats_range.xlsx`);
+};
+el.btnRangePrint.onclick = ()=> window.print();
+
+/* ====== تطبيق الإعدادات عند التحميل ====== */
+function init(){
+  applySettingsToUI();
+  // فتح اختيار ملف الإكسل بالنقر على زر الاستيراد
+  // (تم ضبطه أعلاه)
+}
+init();
+</script>
+</body>
+</html>
