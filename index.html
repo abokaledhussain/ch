@@ -206,14 +206,14 @@
     .channels-grid {
       display: grid;
       gap: 15px;
-      grid-template-columns: repeat(2, 1fr); /* جوال: 2 بطاقات */
+      grid-template-columns: repeat(2, 1fr);
       min-height: 80px;
       padding: 5px;
     }
 
     @media (min-width: 640px) {
       .channels-grid {
-        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); /* تابلت وشاشات: 3 إلى 5+ */
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
       }
     }
 
@@ -251,7 +251,6 @@
       cursor: grabbing;
     }
 
-    /* تأثيرات السحب من مكتبة Sortable */
     .sortable-ghost {
       opacity: 0.3;
       background: #dbeafe !important;
@@ -364,14 +363,13 @@
       <div class="header-actions">
         <button class="btn" onclick="openAddModal()">➕ إضافة قناة</button>
         <button class="btn btn-secondary" onclick="toggleViewMode()" id="viewModeBtn">📱 عرض قائمة</button>
-        <button class="btn btn-secondary" onclick="resetDefaultChannels()">🔄 إرجاع الافتراضي</button>
       </div>
     </header>
 
     <!-- المشغل -->
     <div class="player-wrapper" id="playerWrapper">
       <div class="player-header">
-        <span class="player-title" id="currentChannelTitle">جاري التشغيل...</span>
+        <span class="player-title" id="currentChannelTitle">القناة</span>
         <button class="close-player" onclick="closePlayer()">✕</button>
       </div>
       <div class="video-container" id="videoContainer"></div>
@@ -506,15 +504,14 @@
       return card;
     }
 
-    /* 🖐️ إعدادات السحب باللمس والماوس عبر SortableJS */
     function initSortable() {
       if (sortableNews) sortableNews.destroy();
       if (sortableDoc) sortableDoc.destroy();
 
       const options = {
-        group: 'sharedChannels', // للسماح بالنقل بين الأخبار والوثائقيات
+        group: 'sharedChannels',
         animation: 200,
-        delay: 150, // تأخير بسيط جداً للمس لعدم التضارب مع النقر
+        delay: 150,
         delayOnTouchOnly: true,
         touchStartThreshold: 5,
         onEnd: saveNewOrder
@@ -532,7 +529,7 @@
           const id = card.dataset.id;
           const found = channels.find(c => c.id === id);
           if (found) {
-            found.category = category; // التحديث في حال تم نقل القناة لقسم آخر
+            found.category = category;
             newChannels.push(found);
           }
         });
@@ -546,7 +543,7 @@
       const container = document.getElementById('videoContainer');
       const title = document.getElementById('currentChannelTitle');
 
-      title.textContent = `جاري مشاهدة: ${name}`;
+      title.textContent = name; // عرض اسم القناة مباشرة بدون عبارة "جاري مشاهدة"
       container.innerHTML = `<iframe src="${url}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
       wrapper.style.display = 'block';
       wrapper.scrollIntoView({ behavior: 'smooth' });
@@ -647,14 +644,6 @@
       e.stopPropagation();
       if (confirm('هل أنت متأكد من حذف هذه القناة؟')) {
         channels = channels.filter(c => c.id !== id);
-        saveState();
-        render();
-      }
-    }
-
-    function resetDefaultChannels() {
-      if (confirm('استعادة القنوات الافتراضية؟')) {
-        channels = [...defaultData];
         saveState();
         render();
       }
