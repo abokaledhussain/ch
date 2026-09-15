@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>مشغل القنوات المباشرة التفاعلي</title>
   
-  <!-- مكتبة SortableJS لضمان سلاسة السحب باللمس والماوس -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
   <style>
@@ -22,360 +21,94 @@
       --radius: 16px;
     }
 
-    * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    }
+    * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 20px 15px 60px; }
 
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      min-height: 100vh;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 20px 15px 60px;
-    }
-
-    /* 🟢 الترويسة */
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-bottom: 25px;
-      background: var(--card-bg);
-      padding: 20px 25px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px; background: var(--card-bg); padding: 20px 25px; border-radius: var(--radius); box-shadow: var(--shadow);
     }
+    header h1 { margin: 0; font-size: 22px; color: #0f172a; display: flex; align-items: center; gap: 10px; }
+    .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
-    header h1 {
-      margin: 0;
-      font-size: 22px;
-      color: #0f172a;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .player-wrapper { background: #000; border-radius: var(--radius); overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); margin-bottom: 30px; display: none; }
+    .player-header { background: #1e293b; color: #fff; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .player-title { font-weight: bold; font-size: 16px; }
+    .video-container { position: relative; padding-bottom: 56.25%; height: 0; }
+    .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-    .header-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+    .controls-bar { margin-bottom: 30px; }
+    .search-box { position: relative; }
+    .search-input { width: 100%; padding: 12px 20px; padding-right: 45px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 15px; outline: none; background: var(--card-bg); box-shadow: var(--shadow); }
+    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+    .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 
-    /* 📺 المشغل */
-    .player-wrapper {
-      background: #000;
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
-      margin-bottom: 30px;
-      display: none;
-    }
+    .btn { background: var(--primary); color: #fff; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-secondary { background: #fff; color: var(--text-color); border: 1px solid var(--border-color); }
+    .btn-danger { background: var(--danger); color: #fff; }
 
-    .player-header {
-      background: #1e293b;
-      color: #fff;
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin: 30px 0 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+    .section-title { font-size: 20px; color: #0f172a; margin: 0; }
 
-    .player-title {
-      font-weight: bold;
-      font-size: 16px;
-    }
+    .channels-grid { display: grid; gap: 15px; grid-template-columns: repeat(2, 1fr); min-height: 80px; padding: 5px; }
+    @media (min-width: 640px) { .channels-grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); } }
+    .channels-grid.list-view { grid-template-columns: 1fr !important; }
+    .channels-grid.list-view .channel-card { flex-direction: row; justify-content: space-between; height: 60px; padding: 0 20px; }
 
-    .video-container {
-      position: relative;
-      padding-bottom: 56.25%;
-      height: 0;
-    }
+    .channel-card { background: var(--card-bg); border-radius: 14px; padding: 16px 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; cursor: pointer; user-select: none; box-shadow: var(--shadow); border: 1px solid transparent; height: 120px; touch-action: manipulation; }
+    .channel-card.admin-mode { cursor: grab; }
+    .channel-card.admin-mode:active { cursor: grabbing; }
+    
+    .sortable-ghost { opacity: 0.3; background: #dbeafe !important; border: 2px dashed var(--primary) !important; }
+    .sortable-drag { opacity: 0.9; transform: scale(1.05); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); }
 
-    .video-container iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+    .channel-name { font-weight: 700; font-size: 15px; color: var(--text-color); margin-top: 6px; pointer-events: none; }
+    .channel-logo-img { width: 42px; height: 42px; object-fit: contain; border-radius: 50%; pointer-events: none; background: #ffffff; padding: 2px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
+    .channel-icon-fallback { font-size: 32px; margin-bottom: 2px; pointer-events: none; }
 
-    /* 🔍 البحث */
-    .controls-bar {
-      margin-bottom: 30px;
-    }
-
-    .search-box {
-      position: relative;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 12px 20px;
-      padding-right: 45px;
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      font-size: 15px;
-      outline: none;
-      background: var(--card-bg);
-      box-shadow: var(--shadow);
-    }
-
-    .search-input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-    }
-
-    .search-icon {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted);
-    }
-
-    .btn {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-secondary {
-      background: #fff;
-      color: var(--text-color);
-      border: 1px solid var(--border-color);
-    }
-
-    /* 📂 الأقسام والقنوات */
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 30px 0 15px;
-      border-bottom: 2px solid var(--border-color);
-      padding-bottom: 10px;
-    }
-
-    .section-title {
-      font-size: 20px;
-      color: #0f172a;
-      margin: 0;
-    }
-
-    /* 🎴 الشبكة المرنة (Grid) */
-    .channels-grid {
-      display: grid;
-      gap: 15px;
-      grid-template-columns: repeat(2, 1fr);
-      min-height: 80px;
-      padding: 5px;
-    }
-
-    @media (min-width: 640px) {
-      .channels-grid {
-        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-      }
-    }
-
-    .channels-grid.list-view {
-      grid-template-columns: 1fr !important;
-    }
-
-    .channels-grid.list-view .channel-card {
-      flex-direction: row;
-      justify-content: space-between;
-      height: 60px;
-      padding: 0 20px;
-    }
-
-    /* 🎴 بطاقة القناة */
-    .channel-card {
-      background: var(--card-bg);
-      border-radius: 14px;
-      padding: 16px 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      position: relative;
-      cursor: grab;
-      user-select: none;
-      box-shadow: var(--shadow);
-      border: 1px solid transparent;
-      height: 120px;
-      touch-action: manipulation;
-    }
-
-    .channel-card:active {
-      cursor: grabbing;
-    }
-
-    .sortable-ghost {
-      opacity: 0.3;
-      background: #dbeafe !important;
-      border: 2px dashed var(--primary) !important;
-    }
-
-    .sortable-drag {
-      opacity: 0.9;
-      transform: scale(1.05);
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
-    }
-
-    .channel-name {
-      font-weight: 700;
-      font-size: 15px;
-      color: var(--text-color);
-      margin-top: 6px;
-      pointer-events: none;
-    }
-
-    /* 🖼️ تصميم الشعار */
-    .channel-logo-img {
-      width: 42px;
-      height: 42px;
-      object-fit: contain;
-      border-radius: 50%;
-      pointer-events: none;
-      background: #ffffff;
-      padding: 2px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      border: 1px solid var(--border-color);
-    }
-
-    .channel-icon-fallback {
-      font-size: 32px;
-      margin-bottom: 2px;
-      pointer-events: none;
-    }
-
-    .channel-controls {
-      position: absolute;
-      top: 6px;
-      left: 6px;
-      display: flex;
-      gap: 4px;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    .channel-card:hover .channel-controls {
-      opacity: 1;
-    }
-
-    .ctrl-btn {
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid var(--border-color);
-      width: 26px;
-      height: 26px;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-    }
-
+    .channel-controls { position: absolute; top: 6px; left: 6px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s; }
+    .channel-card:hover .channel-controls { opacity: 1; }
+    .ctrl-btn { background: rgba(255, 255, 255, 0.9); border: 1px solid var(--border-color); width: 26px; height: 26px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; }
     .ctrl-btn.delete:hover { color: var(--danger); }
     .ctrl-btn.edit:hover { color: var(--primary); }
 
-    /* 🪟 النافذة المنبثقة */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(4px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
+    .admin-only { display: none !important; }
+    body.is-admin .admin-only { display: inline-flex !important; }
+    body.is-admin div.admin-only { display: block !important; }
 
-    .modal-card {
-      background: #fff;
-      padding: 25px;
-      border-radius: 20px;
-      width: 90%;
-      max-width: 450px;
-    }
+    footer { margin-top: 50px; text-align: center; padding: 20px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 14px; }
 
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      outline: none;
-    }
-
-    .file-input-btn {
-      display: inline-block;
-      width: 100%;
-      padding: 10px;
-      text-align: center;
-      background: #f8fafc;
-      border: 1px dashed var(--border-color);
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-top: 5px;
-    }
-
-    .file-input-btn:hover {
-      background: #f1f5f9;
-      border-color: var(--primary);
-    }
-
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 20px;
-    }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; }
+    .modal-card { background: #fff; padding: 25px; border-radius: 20px; width: 90%; max-width: 450px; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 600; }
+    .form-control { width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 10px; outline: none; }
+    .file-input-btn { display: inline-block; width: 100%; padding: 10px; text-align: center; background: #f8fafc; border: 1px dashed var(--border-color); border-radius: 10px; cursor: pointer; font-size: 13px; color: var(--text-muted); margin-top: 5px; }
+    .file-input-btn:hover { background: #f1f5f9; border-color: var(--primary); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
   </style>
 </head>
 <body>
 
   <div class="container">
-    
     <header>
       <h1>📺 مشغل القنوات المباشرة</h1>
       <div class="header-actions">
-        <button class="btn" onclick="openAddModal()">➕ إضافة قناة</button>
-        <button class="btn btn-secondary" onclick="toggleViewMode()" id="viewModeBtn">📱 عرض قائمة</button>
+        <!-- أزرار المشرف فقط -->
+        <button class="btn admin-only" onclick="openAddModal()">➕ إضافة قناة</button>
+        <button class="btn btn-secondary admin-only" onclick="copyUpdatedHtmlCode()" title="نسخ الكود كاملاً لاستبداله في GitHub">📋 نسخ كود HTML</button>
+        <button class="btn btn-secondary admin-only" onclick="exportBackup()" title="تصدير القنوات المعدلة">💾 تصدير JSON</button>
+        <label class="btn btn-secondary admin-only" style="cursor:pointer" title="استعادة قنوات ملف">
+          📥 استعادة
+          <input type="file" accept=".json" hidden onchange="importBackup(event)">
+        </label>
+        <button class="btn btn-secondary admin-only" onclick="openChangeCredentialsModal()">⚙️ إعدادات</button>
+        <button class="btn btn-danger admin-only" onclick="logoutAdmin()">🚪 خروج</button>
+        
+        <button class="btn btn-secondary" onclick="toggleViewMode()" id="viewModeBtn">📱 قائمة</button>
       </div>
     </header>
 
-    <!-- المشغل -->
     <div class="player-wrapper" id="playerWrapper">
       <div class="player-header">
         <span class="player-title" id="currentChannelTitle">القناة</span>
@@ -383,7 +116,6 @@
       <div class="video-container" id="videoContainer"></div>
     </div>
 
-    <!-- البحث -->
     <div class="controls-bar">
       <div class="search-box">
         <span class="search-icon">🔍</span>
@@ -391,21 +123,60 @@
       </div>
     </div>
 
-    <!-- الأخبار -->
     <div class="section-header">
       <h2 class="section-title">📰 القنوات الإخبارية</h2>
     </div>
     <div class="channels-grid" id="newsGrid" data-category="news"></div>
 
-    <!-- الوثائقيات -->
     <div class="section-header">
       <h2 class="section-title">🧭 القنوات الوثائقية</h2>
     </div>
     <div class="channels-grid" id="docGrid" data-category="doc"></div>
 
+    <footer>
+      <span id="adminLoginLink" style="cursor:pointer; text-decoration: underline;" onclick="openLoginModal()">🔑 دخول المشرف</span>
+    </footer>
   </div>
 
-  <!-- مودال الإضافة والتعديل -->
+  <!-- مودال الدخول -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-card">
+      <h3>🔑 تسجيل دخول المشرف</h3>
+      <div class="form-group">
+        <label>اسم المستخدم</label>
+        <input type="text" id="loginUser" class="form-control" placeholder="اسم المستخدم">
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <input type="password" id="loginPass" class="form-control" placeholder="كلمة المرور">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeLoginModal()">إلغاء</button>
+        <button class="btn" onclick="loginAdmin()">دخول</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال تغيير الحساب -->
+  <div class="modal-overlay" id="credModal">
+    <div class="modal-card">
+      <h3>⚙️ تغيير بيانات دخول المشرف</h3>
+      <div class="form-group">
+        <label>اسم المستخدم الجديد</label>
+        <input type="text" id="newUser" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور الجديدة</label>
+        <input type="password" id="newPass" class="form-control">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeCredModal()">إلغاء</button>
+        <button class="btn" onclick="saveNewCredentials()">حفظ البيانات</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال إضافة وتعديل قناة -->
   <div class="modal-overlay" id="channelModal">
     <div class="modal-card">
       <h3 id="modalTitle">إضافة قناة جديدة</h3>
@@ -464,9 +235,22 @@
 
     let channels = [];
     let isListView = false;
+    let isAdmin = false;
     let sortableNews, sortableDoc;
 
+    let adminCreds = { user: 'Abokaled', pass: 'Zoom6410' };
+
     function init() {
+      const savedCreds = localStorage.getItem('app_admin_creds');
+      if (savedCreds) {
+        try { adminCreds = JSON.parse(savedCreds); } catch(e){}
+      }
+
+      if (sessionStorage.getItem('is_admin_logged') === 'true') {
+        isAdmin = true;
+        document.body.classList.add('is-admin');
+      }
+
       const saved = localStorage.getItem('app_channels_v5');
       if (saved) {
         try { channels = JSON.parse(saved); } catch(e) { channels = [...defaultData]; }
@@ -480,10 +264,113 @@
       localStorage.setItem('app_channels_v5', JSON.stringify(channels));
     }
 
+    /* 📋 دالة توليد ونسخ كود الـ HTML لاستبداله في GitHub */
+    function copyUpdatedHtmlCode() {
+      let fullHtml = document.documentElement.outerHTML;
+      const formattedJson = JSON.stringify(channels, null, 2);
+      
+      // استبدال القائمة الافتراضية defaultData في الكود المنسوخ بالقنوات المحدثة
+      fullHtml = fullHtml.replace(/const defaultData = \[[\s\S]*?\];/, `const defaultData = ${formattedJson};`);
+
+      navigator.clipboard.writeText(fullHtml).then(() => {
+        alert('📋 تم نسخ كود HTML كاملاً ومحدثاً بجميع القنوات والروابط الجديدة!\n\nيمكنك الآن استبدال الملف في GitHub لتتحدث الصفحة على كافة الأجهزة.');
+      }).catch(() => {
+        alert('تعذر النسخ التلقائي، جرب التصدير برابط JSON');
+      });
+    }
+
+    function openLoginModal() {
+      document.getElementById('loginUser').value = '';
+      document.getElementById('loginPass').value = '';
+      document.getElementById('loginModal').style.display = 'flex';
+    }
+
+    function closeLoginModal() {
+      document.getElementById('loginModal').style.display = 'none';
+    }
+
+    function loginAdmin() {
+      const u = document.getElementById('loginUser').value.trim();
+      const p = document.getElementById('loginPass').value.trim();
+
+      if (u === adminCreds.user && p === adminCreds.pass) {
+        isAdmin = true;
+        sessionStorage.setItem('is_admin_logged', 'true');
+        document.body.classList.add('is-admin');
+        closeLoginModal();
+        render();
+        alert('✅ مرحباً أبا خالد، تم تسجيل الدخول كمشرف بنجاح.');
+      } else {
+        alert('❌ اسم المستخدم أو كلمة المرور غير صحيحة');
+      }
+    }
+
+    function logoutAdmin() {
+      isAdmin = false;
+      sessionStorage.removeItem('is_admin_logged');
+      document.body.classList.remove('is-admin');
+      render();
+    }
+
+    function openChangeCredentialsModal() {
+      document.getElementById('newUser').value = adminCreds.user;
+      document.getElementById('newPass').value = adminCreds.pass;
+      document.getElementById('credModal').style.display = 'flex';
+    }
+
+    function closeCredModal() {
+      document.getElementById('credModal').style.display = 'none';
+    }
+
+    function saveNewCredentials() {
+      const u = document.getElementById('newUser').value.trim();
+      const p = document.getElementById('newPass').value.trim();
+
+      if (!u || !p) {
+        alert('يرجى كتابة اسم المستخدم وكلمة المرور');
+        return;
+      }
+
+      adminCreds = { user: u, pass: p };
+      localStorage.setItem('app_admin_creds', JSON.stringify(adminCreds));
+      closeCredModal();
+      alert('✅ تم تحديث بيانات المشرف بنجاح!');
+    }
+
+    function exportBackup() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(channels, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "my_channels_backup.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importBackup(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          try {
+            const importedData = JSON.parse(evt.target.result);
+            if (Array.isArray(importedData)) {
+              channels = importedData;
+              saveState();
+              render();
+              alert('✅ تم استعادة القنوات بنجاح!');
+            }
+          } catch(err) {
+            alert('⚠️ ملف النسخة الاحتياطية غير صالح');
+          }
+        };
+        reader.readAsText(file);
+      }
+    }
+
     function render() {
       const newsGrid = document.getElementById('newsGrid');
       const docGrid = document.getElementById('docGrid');
-
       newsGrid.innerHTML = '';
       docGrid.innerHTML = '';
 
@@ -501,18 +388,21 @@
 
     function createChannelCard(c) {
       const card = document.createElement('div');
-      card.className = 'channel-card';
+      card.className = 'channel-card' + (isAdmin ? ' admin-mode' : '');
       card.dataset.id = c.id;
 
       const logoHtml = c.logo 
         ? `<img src="${c.logo}" class="channel-logo-img" alt="${escapeHtml(c.name)}" onerror="this.outerHTML='<span class=\\'channel-icon-fallback\\'>📺</span>'">`
         : `<span class="channel-icon-fallback">📺</span>`;
 
-      card.innerHTML = `
-        <div class="channel-controls">
+      const controlsHtml = isAdmin ? `
+        <div class="channel-controls admin-only">
           <button class="ctrl-btn edit" onclick="openEditModal(event, '${c.id}')" title="تعديل">✏️</button>
           <button class="ctrl-btn delete" onclick="deleteChannel(event, '${c.id}')" title="حذف">🗑️</button>
-        </div>
+        </div>` : '';
+
+      card.innerHTML = `
+        ${controlsHtml}
         ${logoHtml}
         <div class="channel-name">${escapeHtml(c.name)}</div>
       `;
@@ -531,7 +421,7 @@
         const reader = new FileReader();
         reader.onload = function(evt) {
           document.getElementById('chanLogoBase64').value = evt.target.result;
-          document.getElementById('chanLogoUrl').value = ''; // تفريغ الخيار الآخَر
+          document.getElementById('chanLogoUrl').value = '';
         };
         reader.readAsDataURL(file);
       }
@@ -541,17 +431,19 @@
       if (sortableNews) sortableNews.destroy();
       if (sortableDoc) sortableDoc.destroy();
 
-      const options = {
-        group: 'sharedChannels',
-        animation: 200,
-        delay: 150,
-        delayOnTouchOnly: true,
-        touchStartThreshold: 5,
-        onEnd: saveNewOrder
-      };
+      if (isAdmin) {
+        const options = {
+          group: 'sharedChannels',
+          animation: 200,
+          delay: 150,
+          delayOnTouchOnly: true,
+          touchStartThreshold: 5,
+          onEnd: saveNewOrder
+        };
 
-      sortableNews = new Sortable(document.getElementById('newsGrid'), options);
-      sortableDoc = new Sortable(document.getElementById('docGrid'), options);
+        sortableNews = new Sortable(document.getElementById('newsGrid'), options);
+        sortableDoc = new Sortable(document.getElementById('docGrid'), options);
+      }
     }
 
     function saveNewOrder() {
@@ -646,7 +538,6 @@
         return;
       }
 
-      // إعطاء الأولوية لصورة الملقات، وإذا لم توجد نأخذ الرابط المباشر
       const finalLogo = logoBase64 || logoUrl;
 
       if (id) {
