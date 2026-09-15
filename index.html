@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>مشغل القنوات المباشرة التفاعلي</title>
   
-  <!-- مكتبة SortableJS لضمان سلسلسة السحب باللمس والماوس -->
+  <!-- مكتبة SortableJS لضمان سلاسة السحب باللمس والماوس -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
   <style>
@@ -179,11 +179,6 @@
       background: #fff;
       color: var(--text-color);
       border: 1px solid var(--border-color);
-    }
-
-    .btn-icon {
-      padding: 10px;
-      border-radius: 10px;
     }
 
     /* 📂 الأقسام والقنوات */
@@ -386,14 +381,12 @@
     <!-- الأخبار -->
     <div class="section-header">
       <h2 class="section-title">📰 القنوات الإخبارية</h2>
-      <button class="btn btn-secondary btn-icon" title="عكس الترتيب" onclick="reverseSection('news')">🔃 عكس الترتيب</button>
     </div>
     <div class="channels-grid" id="newsGrid" data-category="news"></div>
 
     <!-- الوثائقيات -->
     <div class="section-header">
       <h2 class="section-title">🧭 القنوات الوثائقية</h2>
-      <button class="btn btn-secondary btn-icon" title="عكس الترتيب" onclick="reverseSection('doc')">🔃 عكس الترتيب</button>
     </div>
     <div class="channels-grid" id="docGrid" data-category="doc"></div>
 
@@ -543,7 +536,7 @@
       const container = document.getElementById('videoContainer');
       const title = document.getElementById('currentChannelTitle');
 
-      title.textContent = name; // عرض اسم القناة مباشرة بدون عبارة "جاري مشاهدة"
+      title.textContent = name;
       container.innerHTML = `<iframe src="${url}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
       wrapper.style.display = 'block';
       wrapper.scrollIntoView({ behavior: 'smooth' });
@@ -552,20 +545,6 @@
     function closePlayer() {
       document.getElementById('videoContainer').innerHTML = '';
       document.getElementById('playerWrapper').style.display = 'none';
-    }
-
-    function reverseSection(category) {
-      const catChannels = channels.filter(c => c.category === category).reverse();
-      const otherChannels = channels.filter(c => c.category !== category);
-
-      if (category === 'news') {
-        channels = [...catChannels, ...otherChannels];
-      } else {
-        channels = [...otherChannels, ...catChannels];
-      }
-
-      saveState();
-      render();
     }
 
     function toggleViewMode() {
