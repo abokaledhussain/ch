@@ -244,13 +244,25 @@
       font-weight: 700;
       font-size: 15px;
       color: var(--text-color);
-      margin-top: 5px;
+      margin-top: 6px;
       pointer-events: none;
     }
 
-    .channel-icon {
-      font-size: 24px;
-      margin-bottom: 5px;
+    /* 🖼️ شعار القناة التلقائي */
+    .channel-logo-img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      border-radius: 8px;
+      pointer-events: none;
+      background: #f8fafc;
+      padding: 2px;
+      border: 1px solid var(--border-color);
+    }
+
+    .channel-icon-fallback {
+      font-size: 28px;
+      margin-bottom: 2px;
       pointer-events: none;
     }
 
@@ -406,22 +418,32 @@
 
   <script>
     const defaultData = [
-      { id: '1', name: 'الجزيرة', url: 'https://www.youtube.com/embed/bNyUyrR0PHo', category: 'news', icon: '🔴' },
-      { id: '2', name: 'العربية', url: 'https://www.youtube.com/embed/n7eQejkXbnM', category: 'news', icon: '🟣' },
-      { id: '3', name: 'بي بي سي عربي', url: 'https://www.youtube.com/embed/Q_OoLm57loM', category: 'news', icon: '🔴' },
-      { id: '4', name: 'سكاي نيوز', url: 'https://www.youtube.com/embed/oY976rzO-EI', category: 'news', icon: '🔵' },
-      { id: '5', name: 'فرانس 24', url: 'https://www.youtube.com/embed/VuYzy8IuT0Y', category: 'news', icon: '🔵' },
-      { id: '6', name: 'DW عربية', url: 'https://www.youtube.com/embed/AGkp2AL8e7o', category: 'news', icon: '🔹' },
-      { id: '7', name: 'الحدث', url: 'https://www.youtube.com/embed/zq6ohxTDNZY', category: 'news', icon: '🔴' },
-      { id: '8', name: 'الشرق', url: 'https://www.youtube.com/embed/f6VpkfV7m4Y', category: 'news', icon: '🟢' },
-      { id: '9', name: 'ناشيونال جيوغرافيك', url: 'https://www.youtube.com/embed/daqB3i9WYIY', category: 'doc', icon: '🟡' },
-      { id: '10', name: 'الوثائقية الجزيرة', url: 'https://www.youtube.com/embed/TiPYdMXt_XI', category: 'doc', icon: '🟢' },
-      { id: '11', name: 'الشرق وثائقية', url: 'https://www.youtube.com/embed/FlzMedKfQOs', category: 'doc', icon: '🟠' }
+      { id: '1', name: 'الجزيرة', url: 'https://www.youtube.com/embed/bNyUyrR0PHo', category: 'news' },
+      { id: '2', name: 'العربية', url: 'https://www.youtube.com/embed/n7eQejkXbnM', category: 'news' },
+      { id: '3', name: 'بي بي سي عربي', url: 'https://www.youtube.com/embed/Q_OoLm57loM', category: 'news' },
+      { id: '4', name: 'سكاي نيوز', url: 'https://www.youtube.com/embed/oY976rzO-EI', category: 'news' },
+      { id: '5', name: 'فرانس 24', url: 'https://www.youtube.com/embed/VuYzy8IuT0Y', category: 'news' },
+      { id: '6', name: 'DW عربية', url: 'https://www.youtube.com/embed/AGkp2AL8e7o', category: 'news' },
+      { id: '7', name: 'الحدث', url: 'https://www.youtube.com/embed/zq6ohxTDNZY', category: 'news' },
+      { id: '8', name: 'الشرق', url: 'https://www.youtube.com/embed/f6VpkfV7m4Y', category: 'news' },
+      { id: '9', name: 'ناشيونال جيوغرافيك', url: 'https://www.youtube.com/embed/daqB3i9WYIY', category: 'doc' },
+      { id: '10', name: 'الوثائقية الجزيرة', url: 'https://www.youtube.com/embed/TiPYdMXt_XI', category: 'doc' },
+      { id: '11', name: 'الشرق وثائقية', url: 'https://www.youtube.com/embed/FlzMedKfQOs', category: 'doc' }
     ];
 
     let channels = [];
     let isListView = false;
     let sortableNews, sortableDoc;
+
+    // 🌐 دالة استخراج الشعار تلقائياً من النطاق (Domain)
+    function getFaviconUrl(url) {
+      try {
+        const parsedUrl = new URL(url);
+        return `https://www.google.com/s2/favicons?domain=${parsedUrl.hostname}&sz=64`;
+      } catch (e) {
+        return null;
+      }
+    }
 
     function init() {
       const saved = localStorage.getItem('app_channels_v3');
@@ -461,12 +483,17 @@
       card.className = 'channel-card';
       card.dataset.id = c.id;
 
+      const logoUrl = getFaviconUrl(c.url);
+      const logoHtml = logoUrl 
+        ? `<img src="${logoUrl}" class="channel-logo-img" alt="${escapeHtml(c.name)}" onerror="this.outerHTML='<span class=\\'channel-icon-fallback\\'>📺</span>'">`
+        : `<span class="channel-icon-fallback">📺</span>`;
+
       card.innerHTML = `
         <div class="channel-controls">
           <button class="ctrl-btn edit" onclick="openEditModal(event, '${c.id}')" title="تعديل">✏️</button>
           <button class="ctrl-btn delete" onclick="deleteChannel(event, '${c.id}')" title="حذف">🗑️</button>
         </div>
-        <div class="channel-icon">${c.icon || '📺'}</div>
+        ${logoHtml}
         <div class="channel-name">${escapeHtml(c.name)}</div>
       `;
 
@@ -517,7 +544,6 @@
       const container = document.getElementById('videoContainer');
       const title = document.getElementById('currentChannelTitle');
 
-      // تفعيل التشغيل التلقائي عن طريق إلحاق autoplay=1 بالرابط
       let playUrl = url;
       if (playUrl.includes('?')) {
         playUrl += '&autoplay=1';
@@ -593,8 +619,7 @@
           id: Date.now().toString(),
           name,
           url,
-          category,
-          icon: category === 'news' ? '🔴' : '🧭'
+          category
         });
       }
 
