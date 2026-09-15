@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>مشغل القنوات المباشرة التفاعلي</title>
+  
+  <!-- مكتبة SortableJS لضمان سلسلسة السحب باللمس والماوس -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+
   <style>
     :root {
       --bg-color: #f4f7fe;
@@ -14,7 +18,6 @@
       --text-muted: #64748b;
       --border-color: #e2e8f0;
       --danger: #ef4444;
-      --warning: #f59e0b;
       --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
       --radius: 16px;
     }
@@ -30,6 +33,7 @@
       background-color: var(--bg-color);
       color: var(--text-color);
       min-height: 100vh;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .container {
@@ -38,7 +42,7 @@
       padding: 20px 15px 60px;
     }
 
-    /* 🔥 الترويسة */
+    /* 🟢 الترويسة */
     header {
       display: flex;
       justify-content: space-between;
@@ -75,7 +79,6 @@
       box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
       margin-bottom: 30px;
       display: none;
-      transition: all 0.3s ease;
     }
 
     .player-header {
@@ -104,7 +107,6 @@
       align-items: center;
       justify-content: center;
       font-size: 16px;
-      transition: 0.2s;
     }
 
     .close-player:hover {
@@ -113,7 +115,7 @@
 
     .video-container {
       position: relative;
-      padding-bottom: 56.25%; /* 16:9 */
+      padding-bottom: 56.25%;
       height: 0;
     }
 
@@ -126,18 +128,9 @@
       border: none;
     }
 
-    /* 🔍 شريط التحكم والبحث */
+    /* 🔍 البحث */
     .controls-bar {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 15px;
       margin-bottom: 30px;
-    }
-
-    @media (max-width: 640px) {
-      .controls-bar {
-        grid-template-columns: 1fr;
-      }
     }
 
     .search-box {
@@ -154,7 +147,6 @@
       outline: none;
       background: var(--card-bg);
       box-shadow: var(--shadow);
-      transition: 0.2s;
     }
 
     .search-input:focus {
@@ -181,21 +173,12 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      transition: 0.2s;
-    }
-
-    .btn:hover {
-      background: var(--primary-hover);
     }
 
     .btn-secondary {
       background: #fff;
       color: var(--text-color);
       border: 1px solid var(--border-color);
-    }
-
-    .btn-secondary:hover {
-      background: #f8fafc;
     }
 
     .btn-icon {
@@ -217,36 +200,23 @@
       font-size: 20px;
       color: #0f172a;
       margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
-    .section-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    /* 🎴 طريقة العرض الشبكية (Responsive Grid) */
+    /* 🎴 الشبكة المرنة (Grid) */
     .channels-grid {
       display: grid;
       gap: 15px;
-
-      /* العرض الافتراضي الشبكي:
-         الجوال: 2 (🟩🟧)
-         التابلت: 3 إلى 4 (🟧🟩🟧)
-         الشاشات الكبيرة: 5+ 
-      */
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      grid-template-columns: repeat(2, 1fr); /* جوال: 2 بطاقات */
+      min-height: 80px;
+      padding: 5px;
     }
 
     @media (min-width: 640px) {
       .channels-grid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); /* تابلت وشاشات: 3 إلى 5+ */
       }
     }
 
-    /* نمط القائمة (مفتاح التحكم) */
     .channels-grid.list-view {
       grid-template-columns: 1fr !important;
     }
@@ -256,10 +226,6 @@
       justify-content: space-between;
       height: 60px;
       padding: 0 20px;
-    }
-
-    .channels-grid.list-view .channel-controls {
-      opacity: 1;
     }
 
     /* 🎴 بطاقة القناة */
@@ -277,23 +243,25 @@
       user-select: none;
       box-shadow: var(--shadow);
       border: 1px solid transparent;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
       height: 120px;
-    }
-
-    .channel-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.1);
-      border-color: var(--primary);
+      touch-action: manipulation;
     }
 
     .channel-card:active {
       cursor: grabbing;
     }
 
-    .channel-card.dragging {
-      opacity: 0.4;
-      border: 2px dashed var(--primary);
+    /* تأثيرات السحب من مكتبة Sortable */
+    .sortable-ghost {
+      opacity: 0.3;
+      background: #dbeafe !important;
+      border: 2px dashed var(--primary) !important;
+    }
+
+    .sortable-drag {
+      opacity: 0.9;
+      transform: scale(1.05);
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
     }
 
     .channel-name {
@@ -301,22 +269,21 @@
       font-size: 15px;
       color: var(--text-color);
       margin-top: 5px;
-      word-break: break-word;
+      pointer-events: none;
     }
 
     .channel-icon {
       font-size: 24px;
       margin-bottom: 5px;
+      pointer-events: none;
     }
 
-    /* أدوات التحكم داخل البطاقة */
     .channel-controls {
       position: absolute;
       top: 6px;
       left: 6px;
-      right: 6px;
       display: flex;
-      justify-content: space-between;
+      gap: 4px;
       opacity: 0;
       transition: opacity 0.2s;
     }
@@ -327,31 +294,21 @@
 
     .ctrl-btn {
       background: rgba(255, 255, 255, 0.9);
-      border: none;
-      width: 24px;
-      height: 24px;
+      border: 1px solid var(--border-color);
+      width: 26px;
+      height: 26px;
       border-radius: 6px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 12px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .ctrl-btn:hover {
-      background: #fff;
     }
 
     .ctrl-btn.delete:hover { color: var(--danger); }
     .ctrl-btn.edit:hover { color: var(--primary); }
 
-    .move-btns {
-      display: flex;
-      gap: 2px;
-    }
-
-    /* 🪟 النافذة المنبثقة (Modal) */
+    /* 🪟 النافذة المنبثقة */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -369,12 +326,6 @@
       border-radius: 20px;
       width: 90%;
       max-width: 450px;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-    }
-
-    .modal-title {
-      margin-top: 0;
-      font-size: 18px;
     }
 
     .form-group {
@@ -408,17 +359,16 @@
 
   <div class="container">
     
-    <!-- 🟢 الترويسة -->
     <header>
       <h1>📺 مشغل القنوات المباشرة</h1>
       <div class="header-actions">
         <button class="btn" onclick="openAddModal()">➕ إضافة قناة</button>
         <button class="btn btn-secondary" onclick="toggleViewMode()" id="viewModeBtn">📱 عرض قائمة</button>
-        <button class="btn btn-secondary" onclick="resetDefaultChannels()" title="استعادة القنوات الافتراضية">🔄 إرجاع الافتراضي</button>
+        <button class="btn btn-secondary" onclick="resetDefaultChannels()">🔄 إرجاع الافتراضي</button>
       </div>
     </header>
 
-    <!-- 🎬 مشغل الفيديو -->
+    <!-- المشغل -->
     <div class="player-wrapper" id="playerWrapper">
       <div class="player-header">
         <span class="player-title" id="currentChannelTitle">جاري التشغيل...</span>
@@ -427,38 +377,34 @@
       <div class="video-container" id="videoContainer"></div>
     </div>
 
-    <!-- 🔍 شريط البحث -->
+    <!-- البحث -->
     <div class="controls-bar">
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" class="search-input" placeholder="ابحث عن قناة بالاسم..." id="searchInput" oninput="filterChannels()">
+        <input type="text" class="search-input" placeholder="ابحث عن قناة..." id="searchInput" oninput="filterChannels()">
       </div>
     </div>
 
-    <!-- 📰 قسم القنوات الإخبارية -->
+    <!-- الأخبار -->
     <div class="section-header">
       <h2 class="section-title">📰 القنوات الإخبارية</h2>
-      <div class="section-actions">
-        <button class="btn btn-secondary btn-icon" title="عكس ترتيب هذا القسم" onclick="reverseSection('news')">🔃 عكس الترتيب</button>
-      </div>
+      <button class="btn btn-secondary btn-icon" title="عكس الترتيب" onclick="reverseSection('news')">🔃 عكس الترتيب</button>
     </div>
     <div class="channels-grid" id="newsGrid" data-category="news"></div>
 
-    <!-- 🧭 قسم القنوات الوثائقية -->
+    <!-- الوثائقيات -->
     <div class="section-header">
       <h2 class="section-title">🧭 القنوات الوثائقية</h2>
-      <div class="section-actions">
-        <button class="btn btn-secondary btn-icon" title="عكس ترتيب هذا القسم" onclick="reverseSection('doc')">🔃 عكس الترتيب</button>
-      </div>
+      <button class="btn btn-secondary btn-icon" title="عكس الترتيب" onclick="reverseSection('doc')">🔃 عكس الترتيب</button>
     </div>
     <div class="channels-grid" id="docGrid" data-category="doc"></div>
 
   </div>
 
-  <!-- 🪟 نافذة إضافة / تعديل قناة -->
+  <!-- مودال الإضافة والتعديل -->
   <div class="modal-overlay" id="channelModal">
     <div class="modal-card">
-      <h3 class="modal-title" id="modalTitle">إضافة قناة جديدة</h3>
+      <h3 id="modalTitle">إضافة قناة جديدة</h3>
       <input type="hidden" id="editChannelId">
       
       <div class="form-group">
@@ -467,7 +413,7 @@
       </div>
 
       <div class="form-group">
-        <label>رابط تضمين القناة (Embed URL)</label>
+        <label>رابط التضمين (Embed URL)</label>
         <input type="text" id="chanUrl" class="form-control" placeholder="https://www.youtube.com/embed/...">
       </div>
 
@@ -487,7 +433,6 @@
   </div>
 
   <script>
-    // 💾 القنوات الافتراضية
     const defaultData = [
       { id: '1', name: 'الجزيرة', url: 'https://www.youtube.com/embed/bNyUyrR0PHo', category: 'news', icon: '🔴' },
       { id: '2', name: 'العربية', url: 'https://www.youtube.com/embed/n7eQejkXbnM', category: 'news', icon: '🟣' },
@@ -504,10 +449,10 @@
 
     let channels = [];
     let isListView = false;
+    let sortableNews, sortableDoc;
 
-    // 🚀 تهيئة التطبيق
     function init() {
-      const saved = localStorage.getItem('app_channels_v2');
+      const saved = localStorage.getItem('app_channels_v3');
       if (saved) {
         try { channels = JSON.parse(saved); } catch(e) { channels = [...defaultData]; }
       } else {
@@ -517,10 +462,9 @@
     }
 
     function saveState() {
-      localStorage.setItem('app_channels_v2', JSON.stringify(channels));
+      localStorage.setItem('app_channels_v3', JSON.stringify(channels));
     }
 
-    // 🎨 رسم القنوات
     function render() {
       const newsGrid = document.getElementById('newsGrid');
       const docGrid = document.getElementById('docGrid');
@@ -528,8 +472,8 @@
       newsGrid.innerHTML = '';
       docGrid.innerHTML = '';
 
-      channels.forEach((c, index) => {
-        const card = createChannelCard(c, index);
+      channels.forEach((c) => {
+        const card = createChannelCard(c);
         if (c.category === 'news') {
           newsGrid.appendChild(card);
         } else {
@@ -537,27 +481,18 @@
         }
       });
 
-      setupDragAndDrop();
+      initSortable();
     }
 
-    // 🎴 إنشاء بطاقة قناة
-    function createChannelCard(c, index) {
+    function createChannelCard(c) {
       const card = document.createElement('div');
       card.className = 'channel-card';
-      card.draggable = true;
       card.dataset.id = c.id;
-      card.dataset.index = index;
 
       card.innerHTML = `
         <div class="channel-controls">
-          <div class="move-btns">
-            <button class="ctrl-btn" onclick="moveChannel(event, ${index}, -1)" title="تقديم">➡️</button>
-            <button class="ctrl-btn" onclick="moveChannel(event, ${index}, 1)" title="تأخير">⬅️</button>
-          </div>
-          <div>
-            <button class="ctrl-btn edit" onclick="openEditModal(event, '${c.id}')" title="تعديل">✏️</button>
-            <button class="ctrl-btn delete" onclick="deleteChannel(event, '${c.id}')" title="حذف">🗑️</button>
-          </div>
+          <button class="ctrl-btn edit" onclick="openEditModal(event, '${c.id}')" title="تعديل">✏️</button>
+          <button class="ctrl-btn delete" onclick="deleteChannel(event, '${c.id}')" title="حذف">🗑️</button>
         </div>
         <div class="channel-icon">${c.icon || '📺'}</div>
         <div class="channel-name">${escapeHtml(c.name)}</div>
@@ -571,7 +506,41 @@
       return card;
     }
 
-    // 🎬 تشغيل وإغلاق القناة
+    /* 🖐️ إعدادات السحب باللمس والماوس عبر SortableJS */
+    function initSortable() {
+      if (sortableNews) sortableNews.destroy();
+      if (sortableDoc) sortableDoc.destroy();
+
+      const options = {
+        group: 'sharedChannels', // للسماح بالنقل بين الأخبار والوثائقيات
+        animation: 200,
+        delay: 150, // تأخير بسيط جداً للمس لعدم التضارب مع النقر
+        delayOnTouchOnly: true,
+        touchStartThreshold: 5,
+        onEnd: saveNewOrder
+      };
+
+      sortableNews = new Sortable(document.getElementById('newsGrid'), options);
+      sortableDoc = new Sortable(document.getElementById('docGrid'), options);
+    }
+
+    function saveNewOrder() {
+      const newChannels = [];
+      document.querySelectorAll('.channels-grid').forEach(grid => {
+        const category = grid.dataset.category;
+        grid.querySelectorAll('.channel-card').forEach(card => {
+          const id = card.dataset.id;
+          const found = channels.find(c => c.id === id);
+          if (found) {
+            found.category = category; // التحديث في حال تم نقل القناة لقسم آخر
+            newChannels.push(found);
+          }
+        });
+      });
+      channels = newChannels;
+      saveState();
+    }
+
     function playChannel(url, name) {
       const wrapper = document.getElementById('playerWrapper');
       const container = document.getElementById('videoContainer');
@@ -584,33 +553,14 @@
     }
 
     function closePlayer() {
-      const wrapper = document.getElementById('playerWrapper');
-      const container = document.getElementById('videoContainer');
-      container.innerHTML = '';
-      wrapper.style.display = 'none';
+      document.getElementById('videoContainer').innerHTML = '';
+      document.getElementById('playerWrapper').style.display = 'none';
     }
 
-    // ↔️ التقديم والنقل السريع
-    function moveChannel(e, index, direction) {
-      e.stopPropagation();
-      const targetIndex = index + direction;
-      if (targetIndex < 0 || targetIndex >= channels.length) return;
-
-      // تبديل المكانين
-      const temp = channels[index];
-      channels[index] = channels[targetIndex];
-      channels[targetIndex] = temp;
-
-      saveState();
-      render();
-    }
-
-    // 🔃 عكس الترتيب الكامل للقسم (الأول يصبح أخيراً والعكس)
     function reverseSection(category) {
       const catChannels = channels.filter(c => c.category === category).reverse();
       const otherChannels = channels.filter(c => c.category !== category);
 
-      // إعادة بناء المصفوفة
       if (category === 'news') {
         channels = [...catChannels, ...otherChannels];
       } else {
@@ -621,86 +571,12 @@
       render();
     }
 
-    // 🖐️ السحب والإفلات (Drag & Drop)
-    let draggedItem = null;
-
-    function setupDragAndDrop() {
-      const cards = document.querySelectorAll('.channel-card');
-      const grids = document.querySelectorAll('.channels-grid');
-
-      cards.forEach(card => {
-        card.addEventListener('dragstart', (e) => {
-          draggedItem = card;
-          setTimeout(() => card.classList.add('dragging'), 0);
-        });
-
-        card.addEventListener('dragend', () => {
-          card.classList.remove('dragging');
-          draggedItem = null;
-          updateOrderFromDOM();
-        });
-      });
-
-      grids.forEach(grid => {
-        grid.addEventListener('dragover', (e) => {
-          e.preventDefault();
-          const afterElement = getDragAfterElement(grid, e.clientX, e.clientY);
-          if (draggedItem) {
-            if (afterElement == null) {
-              grid.appendChild(draggedItem);
-            } else {
-              grid.insertBefore(draggedItem, afterElement);
-            }
-          }
-        });
-      });
-    }
-
-    function getDragAfterElement(container, x, y) {
-      const draggableElements = [...container.querySelectorAll('.channel-card:not(.dragging)')];
-
-      return draggableElements.reduce((closest, child) => {
-        const box = child.getBoundingClientRect();
-        const offsetX = x - box.left - box.width / 2;
-        const offsetY = y - box.top - box.height / 2;
-        const offset = Math.hypot(offsetX, offsetY);
-
-        if (offset < closest.offset) {
-          return { offset: offset, element: child };
-        } else {
-          return closest;
-        }
-      }, { offset: Number.POSITIVE_INFINITY }).element;
-    }
-
-    function updateOrderFromDOM() {
-      const newChannels = [];
-      document.querySelectorAll('.channels-grid').forEach(grid => {
-        const cat = grid.dataset.category;
-        grid.querySelectorAll('.channel-card').forEach(card => {
-          const id = card.dataset.id;
-          const found = channels.find(c => c.id === id);
-          if (found) {
-            found.category = cat; // يتيح نقل القناة بين الأقسام عبر السحب
-            newChannels.push(found);
-          }
-        });
-      });
-      channels = newChannels;
-      saveState();
-    }
-
-    // 📱 مبدل العرض (شبكي / قائمة)
     function toggleViewMode() {
       isListView = !isListView;
-      const grids = document.querySelectorAll('.channels-grid');
-      const btn = document.getElementById('viewModeBtn');
-
-      grids.forEach(g => g.classList.toggle('list-view', isListView));
-      btn.textContent = isListView ? '🎴 عرض شبكي' : '📱 عرض قائمة';
+      document.querySelectorAll('.channels-grid').forEach(g => g.classList.toggle('list-view', isListView));
+      document.getElementById('viewModeBtn').textContent = isListView ? '🎴 عرض شبكي' : '📱 عرض قائمة';
     }
 
-    // 🔍 البحث المباشر
     function filterChannels() {
       const query = document.getElementById('searchInput').value.toLowerCase();
       document.querySelectorAll('.channel-card').forEach(card => {
@@ -709,7 +585,6 @@
       });
     }
 
-    // ➕/✏️ النافذة المنبثقة والإضافة والتعديل
     function openAddModal() {
       document.getElementById('modalTitle').textContent = 'إضافة قناة جديدة';
       document.getElementById('editChannelId').value = '';
@@ -742,12 +617,11 @@
       const category = document.getElementById('chanCategory').value;
 
       if (!name || !url) {
-        alert('يرجى ملء جميع الحقول');
+        alert('يرجى ملء كافة الحقول');
         return;
       }
 
       if (id) {
-        // تعديل
         const c = channels.find(x => x.id === id);
         if (c) {
           c.name = name;
@@ -755,7 +629,6 @@
           c.category = category;
         }
       } else {
-        // إضافة جديد
         channels.unshift({
           id: Date.now().toString(),
           name,
@@ -780,7 +653,7 @@
     }
 
     function resetDefaultChannels() {
-      if (confirm('استعادة جميع القنوات الافتراضية؟')) {
+      if (confirm('استعادة القنوات الافتراضية؟')) {
         channels = [...defaultData];
         saveState();
         render();
@@ -793,7 +666,6 @@
       }[s]));
     }
 
-    // التشغيل عند البدء
     init();
   </script>
 </body>
